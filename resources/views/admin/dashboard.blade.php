@@ -24,9 +24,9 @@
     </div>
 
     <div class="bg-white p-6 rounded-xl shadow">
-        <h3 class="text-sm text-gray-500">Admin Aktif</h3>
+        <h3 class="text-sm text-gray-500">Total Artikel</h3>
         <p class="text-3xl font-bold mt-2">
-            {{ $totalAdmin ?? 1 }}
+            {{ $totalBlog ?? 0 }}
         </p>
     </div>
 

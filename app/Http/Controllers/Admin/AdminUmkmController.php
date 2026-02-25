@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Umkm;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class AdminUmkmController extends Controller
 {
     public function index()
     {
-        $umkms = Umkm::latest()->paginate(10);
+        $umkms = User::where('role', 'umkm')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10);
+
         return view('admin.umkm.index', compact('umkms'));
     }
 
@@ -22,16 +25,13 @@ class AdminUmkmController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'nama_umkm'       => 'required|string|max:255',
-            'nama_pemilik'    => 'required|string|max:255',
-            'deskripsi'       => 'required',
-            'nomor_whatsapp'  => 'required',
-            'alamat'          => 'required',
-            'logo_url'        => 'required|url',
+            'name'       => 'required|string|max:255',
+            'password'   => 'required|string|min:6|confirmed',
+            'role'       => 'required|string|in:umkm',
+            'email'    => 'required|string|max:255',
         ]);
 
-        Umkm::create($data);
-
+        User::create(array_merge($data, ['role' => 'umkm', 'status' => 'pending']));
         return redirect()
             ->route('admin.umkm.index')
             ->with('success', 'UMKM berhasil ditambahkan');
@@ -39,19 +39,17 @@ class AdminUmkmController extends Controller
 
     public function edit($id)
     {
-        $umkm = Umkm::findOrFail($id);
+        $umkm = User::where('role', 'umkm')->findOrFail($id);
         return view('admin.umkm.edit', compact('umkm'));
     }
 
-    public function update(Request $request, Umkm $umkm)
+    public function update(Request $request, User $umkm)
     {
         $data = $request->validate([
-            'nama_umkm'       => 'required|string|max:255',
-            'nama_pemilik'    => 'required|string|max:255',
-            'deskripsi'       => 'required',
-            'nomor_whatsapp'  => 'required',
-            'alamat'          => 'required',
-            'logo_url'        => 'required|url',
+            'name'       => 'required|string|max:255',
+            'password'   => 'nullable|string|min:6|confirmed',
+            'role'       => 'required|string|in:umkm',
+            'email'    => 'required|string|max:255',
         ]);
 
         $umkm->update($data);
@@ -61,12 +59,30 @@ class AdminUmkmController extends Controller
             ->with('success', 'UMKM berhasil diperbarui');
     }
 
-    public function destroy(Umkm $umkm)
+    public function destroy(User $umkm)
     {
         $umkm->delete();
 
         return redirect()
             ->route('admin.umkm.index')
             ->with('success', 'UMKM berhasil dihapus');
+    }
+
+    public function activate($id)
+    {
+        $user = User::where('role', 'umkm')->findOrFail($id);
+
+        $user->update(['status' => 'active']);
+
+        return response()->json(['status' => 'active', 'message' => 'Akun UMKM berhasil diaktifkan']);
+    }
+
+    public function deactivate($id)
+    {
+        $user = User::where('role', 'umkm')->findOrFail($id);
+
+        $user->update(['status' => 'non-active']);
+
+        return response()->json(['status' => 'non-active', 'message' => 'Akun UMKM berhasil dinonaktifkan']);
     }
 }

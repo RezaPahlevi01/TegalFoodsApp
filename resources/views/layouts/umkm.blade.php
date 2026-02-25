@@ -41,11 +41,12 @@
             </li>
 
             <li>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button class="text-red-500">
-                        Logout
-                    </button>
+            <form action="{{ route('umkm.logout') }}" method="POST">
+                @csrf
+                <button class="text-red-500">
+                    Logout
+                </button>
+            </form>
                 </form>
             </li>
 

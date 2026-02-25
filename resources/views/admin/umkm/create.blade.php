@@ -10,15 +10,12 @@
     <form action="{{ route('admin.umkm.store') }}" method="POST" class="space-y-4">
         @csrf
 
-        <input name="nama_umkm" placeholder="Nama UMKM" class="w-full border p-3 rounded">
-        <input name="nama_pemilik" placeholder="Nama Pemilik" class="w-full border p-3 rounded">
-        <input name="nomor_whatsapp" placeholder="Nomor WhatsApp" class="w-full border p-3 rounded">
-        <input name="alamat" placeholder="Alamat" class="w-full border p-3 rounded">
-        <input name="logo_url" placeholder="URL Logo" class="w-full border p-3 rounded">
-
-        <textarea name="deskripsi" rows="4" placeholder="Deskripsi"
-                  class="w-full border p-3 rounded"></textarea>
-
+        <input name="name" placeholder="Nama UMKM" class="w-full border p-3 rounded">
+        <input name="email" type="email" placeholder="Email" class="w-full border p-3 rounded">
+        <input name="role" type="hidden" value="umkm" class="w-full border p-3 rounded">
+        <input name="password" type="password" placeholder="Password" class="w-full border p-3 rounded">
+        <input name="password_confirmation" type="password" placeholder="Konfirmasi Password" class="w-full border p-3 rounded">
+        <input name="status" type="hidden" value="non-active" class="w-full border p-3 rounded">
         <button class="px-6 py-3 bg-yellow-500 text-white rounded">
             Simpan
         </button>

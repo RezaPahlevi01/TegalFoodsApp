@@ -45,10 +45,9 @@
             <input
                 type="text"
                 name="nama_pemilik"
-                value="{{ old('nama_pemilik', $umkm->nama_pemilik) }}"
+                value="{{ old('name', $umkm->name) }}"
                 class="w-full border p-3 rounded"
-                required
-            >
+                required>
         </div>
 
         {{-- Nomor WhatsApp --}}

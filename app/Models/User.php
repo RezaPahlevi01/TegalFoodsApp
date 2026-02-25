@@ -21,8 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'status',
+        'otp_code',
+        'otp_expired_at'
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *

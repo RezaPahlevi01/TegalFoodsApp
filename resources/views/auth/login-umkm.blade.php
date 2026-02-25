@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center">
-    <form method="POST" action="{{ route('login.process') }}"
+    <form method="POST" action="{{ route('umkm.login.process') }}"
           class="bg-white p-8 rounded shadow w-full max-w-md">
 
         @csrf

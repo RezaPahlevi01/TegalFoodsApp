@@ -54,7 +54,7 @@
             langsung dari ahlinya.
         </p>
 
-        <a href="#umkm"
+        <a href="/mitra-umkm"
            class="px-10 py-3 rounded-lg bg-white/80 text-black font-semibold hover:bg-yellow-400">
             Pesan Sekarang
         </a>
@@ -62,7 +62,7 @@
 </section>
 
 {{-- ================= SLIDER PROMOSI ================= --}}
-<section id="slider" class="py-28 bg-white">
+<section id="slider" class="bg-gradient-to-b from-yellow-100 to-white py-16">
     <div class="container mx-auto px-4">
 
         <h2 class="text-3xl font-bold text-center mb-24">
@@ -117,37 +117,75 @@
 
 
 <!-- {{-- ================= UMKM GRID (TIDAK DIHAPUS) ================= --}}
-<section id="umkm" class="py-16 bg-white">
-    <div class="container mx-auto px-4">
+<section class="bg-white py-16">
+    <div class="max-w-7xl mx-auto px-6">
 
-        <h2 class="text-3xl font-bold text-center mb-12">
-            Mitra UMKM Unggulan
-        </h2>
+        {{-- HEADER --}}
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
+            <div>
+                <h2 class="text-3xl font-extrabold text-gray-800">
+                    🍽️ Makanan Khas Tegal
+                </h2>
+                <p class="text-gray-500 mt-2">
+                    Pilihan kuliner favorit yang wajib kamu coba
+                </p>
+            </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            @foreach ($listUmkm as $umkm)
-                <div class="group bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden">
+            <a href="{{ route('mitra.umkm') }}"
+               class="mt-4 md:mt-0 inline-flex items-center gap-2
+                      bg-yellow-500 hover:bg-yellow-600
+                      text-white px-5 py-3 rounded-full font-semibold transition">
+                Lihat Semua
+                <span>→</span>
+            </a>
+        </div>
 
-                    <img src="{{ $umkm->logo_url }}"
-                         alt="{{ $umkm->nama_umkm }}"
-                         class="w-full h-48 object-cover transition group-hover:scale-105">
+        {{-- GRID --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            @foreach($menuPopuler as $menu)
+            <div class="group bg-white rounded-2xl shadow-md overflow-hidden
+                        hover:shadow-xl transition duration-300">
 
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold mb-2">
-                            {{ $umkm->nama_umkm }}
-                        </h3>
+                {{-- IMAGE --}}
+                <div class="relative overflow-hidden">
+                    <img src="{{ asset('storage/'.$menu->gambar) }}"
+                         alt="{{ $menu->nama }}"
+                         class="w-full h-48 object-cover
+                                group-hover:scale-110 transition duration-500">
 
-                        <p class="text-sm text-gray-600 mb-4 line-clamp-3">
-                            {{ $umkm->deskripsi }}
-                        </p>
+                    {{-- BADGE --}}
+                    <span class="absolute top-3 left-3
+                                 bg-red-500 text-white text-xs font-bold
+                                 px-3 py-1 rounded-full shadow">
+                        🔥 Populer
+                    </span>
+                </div>
 
-                        <a href="{{ route('umkm.show', $umkm->id) }}"
-                           class="text-yellow-600 font-semibold hover:underline">
-                            Lihat Menu →
+                {{-- CONTENT --}}
+                <div class="p-5">
+
+                    <h3 class="text-lg font-bold text-gray-800 mb-1">
+                        {{ $menu->nama }}
+                    </h3>
+
+                    <p class="text-sm text-gray-500 mb-3">
+                        {{ $menu->umkm->nama_umkm ?? 'UMKM Lokal' }}
+                    </p>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-yellow-600 font-extrabold text-lg">
+                            Rp {{ number_format($menu->harga, 0, ',', '.') }}
+                        </span>
+
+                        <a href="{{ route('umkm.show', $menu->umkm_id) }}"
+                           class="text-sm font-semibold text-white
+                                  bg-green-600 hover:bg-green-700
+                                  px-4 py-2 rounded-full transition">
+                            Pesan
                         </a>
                     </div>
-
                 </div>
+            </div>
             @endforeach
         </div>
 
@@ -155,29 +193,73 @@
 </section> -->
 
 {{-- ================= MAKANAN KHAS ================= --}}
-<section id="makanan" class="py-20 bg-white">
-    <div class="container mx-auto px-4">
+<section id="makanan"
+    <div class="max-w-7xl mx-auto px-6">
 
-        <h2 class="text-3xl font-bold text-center mb-16">
-            Makanan Khas Tegal
-        </h2>
-
-        <div class="flex flex-col md:flex-row items-center gap-16 justify-center">
-
-            <div class="bg-white border rounded-xl p-8 max-w-xl shadow">
-                <h3 class="text-2xl font-bold mb-4">
-                    {{ $menuPopuler->first()->nama_makanan ?? 'Tahu Aci' }}
-                </h3>
-
-                <p class="text-gray-600 leading-relaxed">
-                    {{ $menuPopuler->first()->deskripsi ?? 'Salah satu jajanan legendaris dari Tegal.' }}
-                </p>
-            </div>
-
-            <img src="{{ $menuPopuler->first()->gambar_url ?? 'https://images.unsplash.com/photo-1604908554161-89f56f2cdd5a' }}"
-                 class="w-[350px] rounded-xl shadow-lg">
+        {{-- HEADER --}}
+        <div class="container mx-auto px-4 mb-16">
+            <h2 class="text-3xl font-bold text-center mb-4">
+                Artikel Tentang Makanan Khas Tegal
+            </h2>
         </div>
-        
+
+        {{-- GRID BLOG --}}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+
+            @forelse ($blogs as $blog)
+                <div class="group bg-white rounded-2xl overflow-hidden shadow-md
+                            hover:shadow-xl transition duration-300">
+
+                    {{-- IMAGE --}}
+                    <div class="relative h-56 overflow-hidden">
+                        <img
+                            src="{{ asset('storage/' . $blog->image) }}"
+                            alt="{{ $blog->title }}"
+                            class="w-full h-full object-cover
+                                   group-hover:scale-110 transition duration-500"
+                        >
+
+                        {{-- OVERLAY --}}
+                        <div class="absolute inset-0 bg-gradient-to-t
+                                    from-black/60 via-black/30 to-transparent">
+                        </div>
+
+                        {{-- TAG --}}
+                        <span class="absolute top-4 left-4
+                                     bg-yellow-500 text-white text-xs font-bold
+                                     px-3 py-1 rounded-full shadow">
+                            Kuliner Tegal
+                        </span>
+                    </div>
+
+                    {{-- CONTENT --}}
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-3
+                                   group-hover:text-yellow-600 transition">
+                            {{ $blog->title }}
+                        </h3>
+
+                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
+                            {{ $blog->content }}
+                        </p>
+
+                        <a href="{{ url('/blog/' . $blog->slug) }}"
+                           class="inline-flex items-center gap-2
+                                  text-yellow-600 font-semibold text-sm
+                                  hover:text-yellow-700 transition">
+                            Baca selengkapnya
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+            @empty
+                <p class="text-center col-span-3 text-gray-500">
+                    Belum ada artikel makanan khas.
+                </p>
+            @endforelse
+
+        </div>
+
     </div>
 </section>
 

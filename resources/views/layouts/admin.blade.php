@@ -33,6 +33,11 @@
                class="block px-4 py-2 rounded hover:bg-yellow-100">
                 Slider / Hero
             </a>
+
+            <a href="{{ route('admin.foodblog.index') }}"
+               class="block px-4 py-2 rounded hover:bg-yellow-100">
+                Food Blog
+            </a>
         </nav>
     </aside>
 
@@ -42,15 +47,15 @@
         {{-- TOPBAR --}}
         <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
             <h1 class="text-xl font-semibold">
-                @yield('header', 'Dashboard')
+                @yield('header')
             </h1>
 
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button class="text-sm text-red-600 hover:underline">
-                    Logout
-                </button>
-            </form>
+        <form method="POST" action="{{ route('admin.logout') }}">
+            @csrf
+            <button class="text-sm text-red-600 hover:underline">
+                Logout
+            </button>
+        </form>
         </header>
 
         {{-- PAGE CONTENT --}}
