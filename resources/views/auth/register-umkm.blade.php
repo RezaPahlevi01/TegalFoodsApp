@@ -2,141 +2,145 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Daftar UMKM - TegalFood</title>
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-
+    <style>
+        @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-12px); }
+        100% { transform: translateY(0px); }
+        }
+        .float {
+        animation: float 4s ease-in-out infinite;
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gradient-to-br from-yellow-50 via-white to-orange-50">
 
-<div class="min-h-screen flex items-center justify-center px-4">
+        <div class="min-h-screen flex items-center justify-center px-4 py-10">
 
-    <div class="w-full max-w-2xl bg-white rounded-xl shadow-lg p-8">
+            <div class="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden grid md:grid-cols-2">
 
-        <!-- HEADER -->
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">
-                Daftar UMKM TegalFood
+                <!-- ================= LEFT ILLUSTRATION ================= -->
+                <div class="hidden md:flex flex-col justify-center items-center bg-yellow-500 text-white p-10 relative">
+
+            <h2 class="text-3xl font-bold mb-4 text-center">
+                Gabung Jadi Mitra TegalFood
             </h2>
-            <p class="text-sm text-gray-500 mt-1">
-                Buat akun UMKM dan mulai jual produk kamu
+
+            <p class="text-center text-yellow-100 mb-8 max-w-sm">
+                Perluas pasar UMKM kamu dan tingkatkan penjualan bersama TegalFood.
             </p>
+
+            <img src="{{ asset('images/register-umkm.svg') }}"
+                alt="Ilustrasi UMKM"
+                class="w-80 drop-shadow-2xl float">
+
+            <div class="absolute bottom-6 text-xs text-yellow-100">
+                © 2026 TegalFood
+            </div>
         </div>
 
-        <!-- ERROR -->
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-300 text-red-700 p-3 rounded mb-4">
-                <ul class="text-sm">
-                    @foreach ($errors->all() as $error)
-                        <li>• {{ $error }}</li>
-                    @endforeach
-                </ul>
+        <!-- ================= FORM SECTION ================= -->
+        <div class="p-8 sm:p-10">
+
+            <div class="mb-6 text-center">
+                <h2 class="text-2xl sm:text-3xl font-bold text-gray-800">
+                    Daftar UMKM
+                </h2>
+                <p class="text-gray-500 text-sm mt-2">
+                    Buat akun dan mulai jual produk kamu hari ini
+                </p>
             </div>
-        @endif
 
-        <form action="{{ route('umkm.register.store') }}" method="POST">
-            @csrf
+            @if ($errors->any())
+                <div class="bg-red-100 border border-red-300 text-red-700 p-3 rounded mb-4 text-sm">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>• {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-            <!-- DATA AKUN -->
-            <h3 class="font-semibold text-gray-700 mb-3">
-                Data Akun
-            </h3>
+            <form action="{{ route('umkm.register.store') }}" method="POST">
+                @csrf
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <h3 class="font-semibold text-gray-700 mb-3">Data Akun</h3>
 
-                <div>
-                    <label class="text-sm">Nama Pemilik</label>
+                <div class="grid grid-cols-1 gap-4">
+
                     <input type="text" name="name"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        placeholder="Nama lengkap"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Nama Pemilik"
                         required>
-                </div>
 
-                <div>
-                    <label class="text-sm">Email</label>
                     <input type="email" name="email"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        placeholder="example@gmail.com"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Email"
                         required>
-                </div>
 
-                <div>
-                    <label class="text-sm">Password</label>
                     <input type="password" name="password"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Password"
                         required>
-                </div>
 
-                <div>
-                    <label class="text-sm">Konfirmasi Password</label>
                     <input type="password" name="password_confirmation"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Konfirmasi Password"
                         required>
                 </div>
 
-            </div>
+                <hr class="my-6">
 
-            <!-- UMKM -->
-            <hr class="my-6">
+                <h3 class="font-semibold text-gray-700 mb-3">Data UMKM</h3>
 
-            <h3 class="font-semibold text-gray-700 mb-3">
-                Data UMKM
-            </h3>
+                <div class="grid grid-cols-1 gap-4">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-                <div>
-                    <label class="text-sm">Nama UMKM</label>
                     <input type="text" name="nama_umkm"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        placeholder="Nama usaha"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Nama UMKM"
                         required>
-                </div>
 
-                <div>
-                    <label class="text-sm">Nama Pemilik</label>
                     <input type="text" name="nama_pemilik"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        placeholder="Nama pemilik usaha"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Nama Pemilik Usaha"
                         required>
-                </div>
 
-                <div>
-                    <label class="text-sm">Nomor WhatsApp</label>
                     <input type="text" name="nomor_whatsapp"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        placeholder="08xxxxxxxx"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Nomor WhatsApp"
                         required>
-                </div>
 
-                <div class="md:col-span-2">
-                    <label class="text-sm">Alamat UMKM</label>
                     <textarea name="alamat" rows="3"
-                        class="w-full border rounded-lg px-3 py-2 mt-1 focus:ring-2 focus:ring-yellow-400 outline-none"
-                        placeholder="Alamat lengkap UMKM"
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
+                        placeholder="Alamat Lengkap UMKM"
                         required></textarea>
+
                 </div>
 
-            </div>
+                <button type="submit"
+                    class="mt-6 w-full bg-yellow-500 hover:bg-yellow-600
+                           text-white py-3 rounded-xl font-semibold
+                           shadow-lg hover:shadow-xl transition duration-300">
+                    Daftar Sekarang
+                </button>
 
-            <!-- BUTTON -->
-            <button type="submit"
-                class="mt-6 w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition">
+                <p class="text-center text-sm text-gray-500 mt-4">
+                    Sudah punya akun?
+                    <a href="{{ route('umkm.login') }}"
+                       class="text-yellow-600 font-semibold hover:underline">
+                        Login
+                    </a>
+                </p>
 
-                Daftar UMKM
+            </form>
 
-            </button>
-
-            <!-- LINK LOGIN -->
-            <p class="text-center text-sm text-gray-500 mt-4">
-                Sudah punya akun?
-                <a href="{{ route('login') }}" class="text-yellow-600 font-semibold hover:underline">
-                    Login
-                </a>
-            </p>
-
-        </form>
+        </div>
 
     </div>
 

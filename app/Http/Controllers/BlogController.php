@@ -2,63 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FoodBlog;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // PAGE LIST BLOG
     public function index()
     {
-        //
+        $blogs = FoodBlog::latest()->paginate(9);
+        return view('blog.index', compact('blogs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // PAGE DETAIL BLOG
+    public function show($slug)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $blog = FoodBlog::where('slug', $slug)->firstOrFail();
+        return view('blog.show', compact('blog'));
     }
 }

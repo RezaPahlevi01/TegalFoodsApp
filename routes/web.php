@@ -13,6 +13,8 @@ use App\Http\Controllers\Umkm\DashboardController;
 use App\Http\Controllers\Umkm\ProductController;
 use App\Http\Controllers\Umkm\ProfileController;
 use App\Http\Controllers\Admin\AdminFoodBlogController;
+use App\Http\Controllers\BlogController;
+use App\Models\FoodBlog;
 
 Route::middleware(['auth:umkm'])->group(function () {
 
@@ -110,6 +112,8 @@ Route::get('/blog/{slug}', function ($slug) {
     $blog = FoodBlog::where('slug',$slug)->where('status','published')->firstOrFail();
     return view('blog.show', compact('blog'));
 });
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 /*
 |--------------------------------------------------------------------------
 | ADMIN PANEL

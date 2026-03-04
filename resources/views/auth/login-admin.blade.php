@@ -1,25 +1,81 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>@yield('title', 'Admin Panel - TegalFood')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-@section('title', 'Login')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
-@section('content')
-<div class="min-h-screen flex items-center justify-center">
-    <form method="POST" action="{{ route('admin.login.process') }}"
-          class="bg-white p-8 rounded shadow w-full max-w-md">
+<body class="bg-gray-900 text-gray-200">
 
-        @csrf
+<div class="flex min-h-screen">
 
-        <h1 class="text-2xl font-bold mb-6 text-center">Login</h1>
+    {{-- SIDEBAR --}}
+    <aside class="w-64 bg-gray-800 text-gray-200 hidden md:flex flex-col shadow-xl">
 
-        <input type="email" name="email" placeholder="Email"
-               class="w-full border p-3 rounded mb-4" required>
+        <div class="p-6 text-xl font-bold text-yellow-400 border-b border-gray-700">
+            Admin Panel
+        </div>
 
-        <input type="password" name="password" placeholder="Password"
-               class="w-full border p-3 rounded mb-4" required>
+        <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
 
-        <button class="w-full bg-yellow-500 text-white py-3 rounded">
-            Login
-        </button>
-    </form>
+            <a href="{{ route('admin.dashboard') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                Dashboard
+            </a>
+
+            <a href="{{ route('admin.umkm.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                Mitra UMKM
+            </a>
+
+            <a href="{{ route('admin.slider.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                Slider / Hero
+            </a>
+
+            <a href="{{ route('admin.foodblog.index') }}"
+               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                Food Blog
+            </a>
+
+        </nav>
+
+        <div class="p-4 border-t border-gray-700">
+            <form method="POST" action="{{ route('admin.logout') }}">
+                @csrf
+                <button class="w-full text-left text-sm text-red-400 hover:underline">
+                    Logout
+                </button>
+            </form>
+        </div>
+
+    </aside>
+
+    {{-- CONTENT AREA --}}
+    <div class="flex-1 flex flex-col">
+
+        {{-- TOPBAR --}}
+        <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
+            <h1 class="text-lg font-semibold text-gray-100">
+                @yield('header')
+            </h1>
+        </header>
+
+        {{-- MAIN CONTENT --}}
+        <main class="flex-1 p-8">
+
+            <div class="bg-white text-gray-800 rounded-2xl shadow-2xl p-8 min-h-[300px]">
+                @yield('content')
+            </div>
+
+        </main>
+
+    </div>
+
 </div>
-@endsection
+
+</body>
+</html>

@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // ======================
+    // LOGIN ADMIN
+    // ======================
     public function authenticateAdmin(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -26,6 +29,9 @@ class AuthController extends Controller
         ]);
     }
 
+    // ======================
+    // LOGIN UMKM
+    // ======================
     public function authenticateUmkm(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -53,11 +59,9 @@ class AuthController extends Controller
         ]);
     }
 
-
     // ======================
     // REGISTER UMKM
     // ======================
-
     public function showRegisterUmkm()
     {
         return view('auth.register-umkm');
@@ -67,19 +71,16 @@ class AuthController extends Controller
     {
         $request->validate([
 
-            // USER
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
 
-            // UMKM
             'nama_umkm' => 'required',
             'nama_pemilik' => 'required',
             'alamat' => 'required',
             'nomor_whatsapp' => 'required'
         ]);
 
-        // SIMPAN USER
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -89,7 +90,6 @@ class AuthController extends Controller
             'status' => 'pending'
         ]);
 
-        // SIMPAN UMKM
         Umkm::create([
             'user_id' => $user->id,
             'nama_umkm' => $request->nama_umkm,
@@ -99,14 +99,13 @@ class AuthController extends Controller
         ]);
 
         return redirect()
-            ->route('login')
+            ->route('umkm.login')
             ->with('success', 'Pendaftaran berhasil. Menunggu verifikasi admin.');
     }
 
     // ======================
     // LOGOUT
     // ======================
-
     public function logoutAdmin(Request $request)
     {
         Auth::guard('admin')->logout();
@@ -122,6 +121,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/login-umkm');
     }
 }

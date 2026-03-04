@@ -12,6 +12,29 @@
         #navbar {
         background-color: transparent;
     }
+    /* HERO SLIDE ANIMATION */
+    .swiper-slide {
+        transform: scale(1.05);
+        transition: transform 1s ease;
+    }
+
+    .swiper-slide-active {
+        transform: scale(1);
+    }
+    /* SCROLL ANIMATION */
+    .reveal {
+        opacity: 0;
+        transform: translateY(60px);
+        transition:
+            opacity 0.6s ease,
+            transform 0.6s ease;
+        will-change: opacity, transform;
+    }
+
+    .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
 </style>
 @endpush
 
@@ -62,7 +85,7 @@
 </section>
 
 {{-- ================= SLIDER PROMOSI ================= --}}
-<section id="slider" class="bg-gradient-to-b from-yellow-100 to-white py-16">
+<section id="slider" class="bg-gradient-to-b from-yellow-100 to-white py-16 reveal">
     <div class="container mx-auto px-4">
 
         <h2 class="text-3xl font-bold text-center mb-24">
@@ -114,90 +137,12 @@
     </div>
 </section>
 
-
-
-<!-- {{-- ================= UMKM GRID (TIDAK DIHAPUS) ================= --}}
-<section class="bg-white py-16">
-    <div class="max-w-7xl mx-auto px-6">
-
-        {{-- HEADER --}}
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-10">
-            <div>
-                <h2 class="text-3xl font-extrabold text-gray-800">
-                    🍽️ Makanan Khas Tegal
-                </h2>
-                <p class="text-gray-500 mt-2">
-                    Pilihan kuliner favorit yang wajib kamu coba
-                </p>
-            </div>
-
-            <a href="{{ route('mitra.umkm') }}"
-               class="mt-4 md:mt-0 inline-flex items-center gap-2
-                      bg-yellow-500 hover:bg-yellow-600
-                      text-white px-5 py-3 rounded-full font-semibold transition">
-                Lihat Semua
-                <span>→</span>
-            </a>
-        </div>
-
-        {{-- GRID --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            @foreach($menuPopuler as $menu)
-            <div class="group bg-white rounded-2xl shadow-md overflow-hidden
-                        hover:shadow-xl transition duration-300">
-
-                {{-- IMAGE --}}
-                <div class="relative overflow-hidden">
-                    <img src="{{ asset('storage/'.$menu->gambar) }}"
-                         alt="{{ $menu->nama }}"
-                         class="w-full h-48 object-cover
-                                group-hover:scale-110 transition duration-500">
-
-                    {{-- BADGE --}}
-                    <span class="absolute top-3 left-3
-                                 bg-red-500 text-white text-xs font-bold
-                                 px-3 py-1 rounded-full shadow">
-                        🔥 Populer
-                    </span>
-                </div>
-
-                {{-- CONTENT --}}
-                <div class="p-5">
-
-                    <h3 class="text-lg font-bold text-gray-800 mb-1">
-                        {{ $menu->nama }}
-                    </h3>
-
-                    <p class="text-sm text-gray-500 mb-3">
-                        {{ $menu->umkm->nama_umkm ?? 'UMKM Lokal' }}
-                    </p>
-
-                    <div class="flex items-center justify-between">
-                        <span class="text-yellow-600 font-extrabold text-lg">
-                            Rp {{ number_format($menu->harga, 0, ',', '.') }}
-                        </span>
-
-                        <a href="{{ route('umkm.show', $menu->umkm_id) }}"
-                           class="text-sm font-semibold text-white
-                                  bg-green-600 hover:bg-green-700
-                                  px-4 py-2 rounded-full transition">
-                            Pesan
-                        </a>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-
-    </div>
-</section> -->
-
-{{-- ================= MAKANAN KHAS ================= --}}
+{{-- ================= BLOG MAKANAN KHAS ================= --}}
 <section id="makanan"
     <div class="max-w-7xl mx-auto px-6">
 
         {{-- HEADER --}}
-        <div class="container mx-auto px-4 mb-16">
+        <div class="container mx-auto px-4 mb-16 reveal">
             <h2 class="text-3xl font-bold text-center mb-4">
                 Artikel Tentang Makanan Khas Tegal
             </h2>
@@ -206,9 +151,11 @@
         {{-- GRID BLOG --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
 
-            @forelse ($blogs as $blog)
+            @forelse ($blogs as $index => $blog)
                 <div class="group bg-white rounded-2xl overflow-hidden shadow-md
-                            hover:shadow-xl transition duration-300">
+                            hover:shadow-2xl hover:-translate-y-2
+                            transition-all duration-500 reveal"
+                    style="transition-delay: {{ $index * 120 }}ms">
 
                     {{-- IMAGE --}}
                     <div class="relative h-56 overflow-hidden">
@@ -316,5 +263,27 @@
             }
         });
     }
+</script>
+<script>
+    const reveals = document.querySelectorAll('.reveal');
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Masuk viewport → muncul
+                    entry.target.classList.add('active');
+                } else {
+                    // Keluar viewport → menghilang
+                    entry.target.classList.remove('active');
+                }
+            });
+        },
+        {
+            threshold: 0.2, // 20% terlihat baru aktif
+        }
+    );
+
+    reveals.forEach(el => observer.observe(el));
 </script>
 @endpush
