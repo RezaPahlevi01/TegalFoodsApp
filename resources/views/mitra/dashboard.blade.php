@@ -12,7 +12,6 @@
 
     <div class="flex items-center gap-6 mb-6">
 
-        {{-- LOGO --}}
         <div>
             @if($umkm->logo_url)
                 <img src="{{ asset('storage/'.$umkm->logo_url) }}"

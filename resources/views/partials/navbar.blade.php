@@ -45,9 +45,9 @@
          transition-all duration-300 ease-out"
   >
     <ul class="flex flex-col p-6 gap-6 text-gray-800 font-semibold">
-      <li><a class="flex items-center gap-3 hover:text-yellow-500">🏠 Beranda</a></li>
-      <li><a class="flex items-center gap-3 hover:text-yellow-500">🏪 UMKM</a></li>
-      <li><a class="flex items-center gap-3 hover:text-yellow-500">📰 Artikel</a></li>
+      <li><a href="{{ route('welcome') }}" class="flex items-center gap-3 hover:text-yellow-500">🏠 Beranda</a></li>
+      <li><a href="/mitra-umkm" class="flex items-center gap-3 hover:text-yellow-500">🏪 UMKM</a></li>
+      <li><a href="{{ route('blog.index') }}" class="flex items-center gap-3 hover:text-yellow-500">📰 Artikel</a></li>
       <a href="{{ route('umkm.register') }}"
         style="position:relative; z-index:9999;"
         class="px-4 py-2 text-white bg-yellow-400 rounded-md hover:bg-yellow-500 justify-center flex">

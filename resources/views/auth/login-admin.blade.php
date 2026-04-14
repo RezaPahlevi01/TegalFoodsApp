@@ -2,80 +2,67 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Admin Panel - TegalFood')</title>
+    <title>Login Admin - TegalFood</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Tailwind CDN --}}
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-900 text-gray-200">
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
 
-<div class="flex min-h-screen">
+    <div class="bg-white w-full max-w-md p-8 rounded-2xl shadow-2xl">
 
-    {{-- SIDEBAR --}}
-    <aside class="w-64 bg-gray-800 text-gray-200 hidden md:flex flex-col shadow-xl">
-
-        <div class="p-6 text-xl font-bold text-yellow-400 border-b border-gray-700">
-            Admin Panel
-        </div>
-
-        <nav class="flex-1 px-4 py-6 space-y-2 text-sm">
-
-            <a href="{{ route('admin.dashboard') }}"
-               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
-                Dashboard
-            </a>
-
-            <a href="{{ route('admin.umkm.index') }}"
-               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
-                Mitra UMKM
-            </a>
-
-            <a href="{{ route('admin.slider.index') }}"
-               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
-                Slider / Hero
-            </a>
-
-            <a href="{{ route('admin.foodblog.index') }}"
-               class="block px-4 py-2 rounded-lg hover:bg-gray-700 transition">
-                Food Blog
-            </a>
-
-        </nav>
-
-        <div class="p-4 border-t border-gray-700">
-            <form method="POST" action="{{ route('admin.logout') }}">
-                @csrf
-                <button class="w-full text-left text-sm text-red-400 hover:underline">
-                    Logout
-                </button>
-            </form>
-        </div>
-
-    </aside>
-
-    {{-- CONTENT AREA --}}
-    <div class="flex-1 flex flex-col">
-
-        {{-- TOPBAR --}}
-        <header class="bg-gray-800 border-b border-gray-700 px-6 py-4">
-            <h1 class="text-lg font-semibold text-gray-100">
-                @yield('header')
+        {{-- TITLE --}}
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800">
+                Admin Panel
             </h1>
-        </header>
+            <p class="text-sm text-gray-500 mt-2">
+                Login untuk mengakses dashboard administrator
+            </p>
+        </div>
 
-        {{-- MAIN CONTENT --}}
-        <main class="flex-1 p-8">
+        {{-- ERROR --}}
+        @if ($errors->any())
+            <div class="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">
+                {{ $errors->first() }}
+            </div>
+        @endif
 
-            <div class="bg-white text-gray-800 rounded-2xl shadow-2xl p-8 min-h-[300px]">
-                @yield('content')
+        {{-- FORM --}}
+        <form method="POST" action="{{ route('admin.login.process') }}">
+            @csrf
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                </label>
+                <input type="email" name="email"
+                       class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
+                       required>
             </div>
 
-        </main>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    Password
+                </label>
+                <input type="password" name="password"
+                       class="w-full border border-gray-300 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800"
+                       required>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition">
+                Login
+            </button>
+        </form>
+
+        <div class="text-center text-xs text-gray-400 mt-6">
+            © 2026 TegalFood Admin System
+        </div>
 
     </div>
-
-</div>
 
 </body>
 </html>

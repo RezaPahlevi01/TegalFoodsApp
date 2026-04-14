@@ -6,24 +6,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {{-- Tailwind CDN --}}
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style type="text/tailwindcss">
+        @layer theme {
+            extend {
+                colors: {
+                    'brand-primary': '#800000', // Maroon
+                    'brand-secondary': '#F5F5DC', // Beige
+                    'brand-accent': '#FFC107', // Kuning Emas
+                    'brand-text': '#333333',
+                }
+            }
+        }
+    </style>
+    
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
-
-<body class="bg-gray-50 text-gray-800">
-
-<section class="py-20">
+    <body class="bg-gray-50">
+        <header class="bg-white shadow-md sticky top-0 z-50">
+            <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+                <a href="/" class="flex items-center text-2xl font-bold text-brand-primary">
+                    <img src="{{ asset('images/logo.png') }}" alt="TegalFood Logo" class="h-55 w-55 mr-2 object-contain">
+                </a>
+                <div>
+                    <a href="/" class="text-brand-primary font-semibold hover:underline">
+                        &larr; Kembali ke Beranda
+                    </a>
+                </div>
+            </nav>
+        </header>
     <div class="max-w-7xl mx-auto px-6">
-
-        {{-- BACK BUTTON --}}
-        <a href="{{ url('/') }}"
-           class="inline-flex items-center gap-2 mb-10
-                  text-yellow-600 font-semibold
-                  hover:text-yellow-700 transition">
-            ← Kembali ke Beranda
-        </a>
-
         {{-- TITLE --}}
-        <h1 class="text-4xl font-bold text-center mb-16">
+        <h1 class="text-4xl font-bold text-center mb-16 mt-16">
             Filosofi di Balik Citarasa Khas Tegal
         </h1>
 
