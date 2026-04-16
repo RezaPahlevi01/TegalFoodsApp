@@ -89,6 +89,12 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.o
 // RESEND OTP
 Route::get('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend.otp');
 
+// GOOGLE LOGIN UMKM
+Route::get('/auth/umkm/google', [AuthController::class, 'redirectToGoogle'])
+    ->name('umkm.google.redirect');
+Route::get('/auth/umkm/google/callback', [AuthController::class, 'handleGoogleCallback'])
+    ->name('umkm.google.callback');
+
 
 
 

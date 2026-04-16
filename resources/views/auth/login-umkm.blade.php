@@ -53,6 +53,20 @@
 
             @csrf
 
+            @if(session('success'))
+                <div class="mb-4 rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                    @foreach($errors->all() as $error)
+                        <div>{{ $error }}</div>
+                    @endforeach
+                </div>
+            @endif
+
             <h1 class="text-3xl font-bold mb-2 text-gray-800">
                 Login UMKM
             </h1>
@@ -83,6 +97,20 @@
                     class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold transition duration-300">
                 Login
             </button>
+
+            <div class="mt-4 flex justify-center">
+                <a href="{{ route('umkm.google.redirect') }}"
+                class="flex items-center justify-center w-12 h-12 rounded-full border border-gray-300 bg-white shadow-sm hover:shadow-md hover:bg-gray-100 transition duration-300"
+                title="Login dengan Google">
+
+                    <svg class="w-6 h-6" viewBox="0 0 48 48">
+                        <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z"/>
+                        <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 18.9 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/>
+                        <path fill="#4CAF50" d="M24 44c5.2 0 10-2 13.6-5.3l-6.3-5.2C29.3 35.9 26.8 37 24 37c-5.2 0-9.6-3.5-11.2-8.3l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
+                        <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-1.1 3-3.4 5.4-6.3 6.7l6.3 5.2C39.8 36.2 44 30.7 44 24c0-1.3-.1-2.7-.4-3.5z"/>
+                    </svg>
+                </a>
+            </div>
 
             <p class="text-sm text-center text-gray-500 mt-6">
                 Belum punya akun?

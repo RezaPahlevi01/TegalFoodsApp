@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'google_id',
         'otp_code',
         'otp_expired_at'
     ];
@@ -31,7 +32,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $guarded = [
+    protected $hidden = [
         'password',
         'remember_token',
     ];
@@ -45,11 +46,20 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'otp_expired_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
-        public function umkm()
+    protected static function booted(): void
+    {
+        static::deleting(function (User $user): void {
+            // Pastikan profil UMKM ikut terhapus saat akun user dihapus.
+            $user->umkm()->delete();
+        });
+    }
+
+    public function umkm()
     {
         return $this->hasOne(Umkm::class);
     }
