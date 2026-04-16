@@ -17,15 +17,22 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        $credentials['role'] = 'admin';
-
         if (Auth::guard('admin')->attempt($credentials)) {
+
             $request->session()->regenerate();
+
+            $user = Auth::guard('admin')->user(); // ✅ BENAR
+
+            if (!$user || $user->role !== 'admin') {
+                Auth::guard('admin')->logout();
+                return back()->withErrors(['email' => 'Bukan admin']);
+            }
+
             return redirect()->route('admin.dashboard');
         }
 
         return back()->withErrors([
-            'email' => 'Login admin gagal',
+            'email' => 'Login admin gagal'
         ]);
     }
 
@@ -36,26 +43,27 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        $credentials['role'] = 'umkm';
-
         if (Auth::guard('umkm')->attempt($credentials)) {
 
-            $user = Auth::guard('umkm')->user();
+            $request->session()->regenerate();
+
+            $user = Auth::guard('umkm')->user(); // ✅ WAJIB guard
+
+            if (!$user || $user->role !== 'umkm') {
+                Auth::guard('umkm')->logout();
+                return back()->withErrors(['email' => 'Bukan UMKM']);
+            }
 
             if ($user->status !== 'active') {
                 Auth::guard('umkm')->logout();
-
-                return back()->withErrors([
-                    'email' => 'Akun belum aktif'
-                ]);
+                return back()->withErrors(['email' => 'Belum aktif']);
             }
 
-            $request->session()->regenerate();
             return redirect()->route('umkm.dashboard');
         }
 
         return back()->withErrors([
-            'email' => 'Login UMKM gagal',
+            'email' => 'Login gagal'
         ]);
     }
 
@@ -70,7 +78,6 @@ class AuthController extends Controller
     public function registerUmkm(Request $request)
     {
         $request->validate([
-
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
@@ -85,7 +92,6 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-
             'role' => 'umkm',
             'status' => 'pending'
         ]);
@@ -103,24 +109,27 @@ class AuthController extends Controller
             ->with('success', 'Pendaftaran berhasil. Menunggu verifikasi admin.');
     }
 
-    // ======================
-    // LOGOUT
-    // ======================
     public function logoutAdmin(Request $request)
     {
         Auth::guard('admin')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
 
-        return redirect('/login-admin');
+        if (!Auth::guard('umkm')->check()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect()->route('admin.login');
     }
 
     public function logoutUmkm(Request $request)
     {
         Auth::guard('umkm')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
 
-        return redirect('/login-umkm');
+        if (!Auth::guard('admin')->check()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect()->route('umkm.login');
     }
 }

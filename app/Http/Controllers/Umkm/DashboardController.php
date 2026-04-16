@@ -14,12 +14,12 @@ class DashboardController extends Controller
     // ===============================
     public function index()
     {
-        $user = Auth::user();
+        $user = Auth::guard('umkm')->user();
         $umkm = $user->umkm;
 
         // Jika belum buat profil
         if (!$umkm) {
-            return redirect()->route('umkm.profile.create');
+            return redirect()->route('umkm.profile.edit');
         }
 
         return view('mitra.dashboard', compact('umkm'));
@@ -30,7 +30,7 @@ class DashboardController extends Controller
     // ===============================
     public function editProfile()
     {
-        $user = Auth::user();
+        $user = Auth::guard('umkm')->user();
         $umkm = $user->umkm;
 
         return view('mitra.profile.edit', compact('umkm'));
@@ -41,7 +41,7 @@ class DashboardController extends Controller
     // ===============================
     public function updateProfile(Request $request)
     {
-        $user = Auth::user();
+        $user = Auth::guard('umkm')->user();
         $umkm = $user->umkm;
 
         $request->validate([
@@ -50,7 +50,7 @@ class DashboardController extends Controller
             'nomor_whatsapp' => 'required',
             'alamat' => 'required',
             'deskripsi' => 'nullable',
-            'logo_url' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'logo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         // ===============================

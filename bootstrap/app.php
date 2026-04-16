@@ -12,10 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function ($middleware) {
         $middleware->alias([
-            'admin' => \App\Http\Middleware\IsAdmin::class,            
-            'umkm' => \App\Http\Middleware\UmkmMiddleware::class,
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
+    ->withExceptions(function ($exceptions) {
         //
-    })->create();
+    })
+    ->create();

@@ -14,31 +14,23 @@ return [
     */
 
     'guards' => [
-
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
-
-        'admin' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
-
-        'umkm' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | User Providers
-    |--------------------------------------------------------------------------
-    */
+    'admin' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+
+    'umkm' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+    ],
 
     'providers' => [
-
         'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,

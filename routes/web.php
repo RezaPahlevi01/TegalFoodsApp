@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\AdminFoodBlogController;
 use App\Http\Controllers\BlogController;
 use App\Models\FoodBlog;
 
-Route::middleware(['auth:umkm'])->group(function () {
+Route::middleware(['auth:umkm', 'role:umkm'])->group(function () {
 
     Route::get('/umkm/dashboard',
         [DashboardController::class,'index']
@@ -69,13 +69,11 @@ Route::post('/login-admin', [AuthController::class, 'authenticateAdmin'])
 Route::post('/login-umkm', [AuthController::class, 'authenticateUmkm'])
     ->name('umkm.login.process');
 
-// LOGOUT
 Route::post('/logout-admin', [AuthController::class, 'logoutAdmin'])
     ->name('admin.logout');
 
 Route::post('/logout-umkm', [AuthController::class, 'logoutUmkm'])
     ->name('umkm.logout');
-
 
 // REGISTER UMKM
 Route::get('/register-umkm', [AuthController::class, 'showRegisterUmkm'])
@@ -121,7 +119,7 @@ Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 */
 Route::prefix('admin')
     ->name('admin.')
-    ->middleware(['auth:admin'])
+    ->middleware(['auth:admin', 'role:admin'])
     ->group(function () {
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])
