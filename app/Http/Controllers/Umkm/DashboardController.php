@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Umkm;
 
 use App\Http\Controllers\Controller;
+use App\Models\MenuView;
+use App\Models\UmkmView;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
@@ -15,14 +19,59 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::guard('umkm')->user();
-        $umkm = $user->umkm;
+        $umkm = $user->umkm()->with('makanans')->first();
 
         // Jika belum buat profil
         if (!$umkm) {
             return redirect()->route('umkm.profile.edit');
         }
 
-        return view('mitra.dashboard', compact('umkm'));
+        $startDate = now()->subDays(6)->toDateString();
+        $endDate = now()->toDateString();
+
+        $dailyVisitors = UmkmView::select(
+                'view_date',
+                DB::raw('COUNT(DISTINCT session_id) as total')
+            )
+            ->where('umkm_id', $umkm->id)
+            ->whereBetween('view_date', [$startDate, $endDate])
+            ->groupBy('view_date')
+            ->orderBy('view_date')
+            ->pluck('total', 'view_date');
+
+        $visitorChartLabels = [];
+        $visitorChartData = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i)->toDateString();
+            $visitorChartLabels[] = Carbon::parse($date)->translatedFormat('d M');
+            $visitorChartData[] = $dailyVisitors->get($date) ?? 0;
+        }
+
+        $popularMenus = $umkm->makanans()
+            ->leftJoin('menu_views', 'makanans.id', '=', 'menu_views.makanan_id')
+            ->select(
+                'makanans.id',
+                'makanans.nama_makanan',
+                DB::raw('COUNT(menu_views.id) as total_views')
+            )
+            ->groupBy('makanans.id', 'makanans.nama_makanan')
+            ->orderByDesc('total_views')
+            ->limit(5)
+            ->get();
+
+        return view('mitra.dashboard', [
+            'umkm' => $umkm,
+            'totalVisitors' => UmkmView::where('umkm_id', $umkm->id)->count(),
+            'totalMenuViews' => MenuView::where('umkm_id', $umkm->id)->count(),
+            'totalMenus' => $umkm->makanans->count(),
+            'visitorChartLabels' => $visitorChartLabels,
+            'visitorChartData' => $visitorChartData,
+            'popularMenusLabels' => $popularMenus->pluck('nama_makanan')->map(
+                fn ($name) => str($name)->limit(24)->toString()
+            )->all(),
+            'popularMenusData' => $popularMenus->pluck('total_views')->all(),
+        ]);
     }
 
     // ===============================

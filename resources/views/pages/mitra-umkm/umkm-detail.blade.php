@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <title>{{ $umkm->nama_umkm }} - TegalFood</title>
 
@@ -84,7 +85,14 @@
                             Rp {{ number_format($makanan->harga, 0, ',', '.') }}
                         </span>
                         
-                        <button @click="open = !open" class="text-sm text-brand-primary font-semibold hover:underline mt-2 flex items-center gap-1">
+                        <button
+                            @click="
+                                open = !open;
+                                if (open) {
+                                    window.trackMenuView({{ $makanan->id }});
+                                }
+                            "
+                            class="text-sm text-brand-primary font-semibold hover:underline mt-2 flex items-center gap-1">
                             <span>Lihat Deskripsi</span>
                             <svg class="w-4 h-4 transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
@@ -112,5 +120,29 @@
         </div>
     </footer>
 
+<script>
+    const trackedMenus = new Set();
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+    window.trackMenuView = function (menuId) {
+        if (!menuId || trackedMenus.has(menuId)) {
+            return;
+        }
+
+        trackedMenus.add(menuId);
+
+        fetch(`/menu/${menuId}/view`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({})
+        }).catch(() => {
+            trackedMenus.delete(menuId);
+        });
+    };
+</script>
 </body>
-</html>`
+</html>

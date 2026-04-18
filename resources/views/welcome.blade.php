@@ -149,18 +149,17 @@
         </div>
 
         {{-- GRID BLOG --}}
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 
             @forelse ($blogs as $index => $blog)
-                <div class="group bg-white rounded-2xl overflow-hidden shadow-md
-                            hover:shadow-2xl hover:-translate-y-2
-                            transition-all duration-500 reveal"
-                    style="transition-delay: {{ $index * 120 }}ms">
+                <article class="group overflow-hidden rounded-2xl bg-white shadow-sm
+                               transition-all duration-500 hover:-translate-y-1 hover:shadow-xl reveal"
+                         style="transition-delay: {{ min($index * 100, 400) }}ms">
 
                     {{-- IMAGE --}}
-                    <div class="relative h-56 overflow-hidden">
+                    <div class="relative h-40 overflow-hidden">
                         <img
-                            src="{{ asset('storage/' . $blog->image) }}"
+                            src="{{ $blog->image ? (\Illuminate\Support\Str::startsWith($blog->image, ['http://', 'https://']) ? $blog->image : asset('storage/' . $blog->image)) : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80' }}"
                             alt="{{ $blog->title }}"
                             class="w-full h-full object-cover
                                    group-hover:scale-110 transition duration-500"
@@ -172,7 +171,7 @@
                         </div>
 
                         {{-- TAG --}}
-                        <span class="absolute top-4 left-4
+                        <span class="absolute top-3 left-3
                                      bg-yellow-500 text-white text-xs font-bold
                                      px-3 py-1 rounded-full shadow">
                             Kuliner Tegal
@@ -180,25 +179,26 @@
                     </div>
 
                     {{-- CONTENT --}}
-                    <div class="p-6">
-                        <h3 class="text-xl font-bold text-gray-800 mb-3
-                                   group-hover:text-yellow-600 transition">
+                    <div class="p-4">
+                        <h3 class="text-base font-bold text-gray-800
+                                   group-hover:text-yellow-600 transition line-clamp-2">
                             {{ $blog->title }}
                         </h3>
 
-                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-5">
+                        <p class="mt-2 text-gray-600 text-sm leading-relaxed line-clamp-2">
                             {{ $blog->content }}
                         </p>
 
-                        <a href="{{ url('/blog/' . $blog->slug) }}"
-                           class="inline-flex items-center gap-2
-                                  text-yellow-600 font-semibold text-sm
-                                  hover:text-yellow-700 transition">
-                            Baca selengkapnya
-                            <span>→</span>
-                        </a>
+                        <div class="mt-4 flex items-center justify-between">
+                            <a href="{{ route('blog.show', $blog->slug) }}"
+                               class="inline-flex items-center gap-2 text-yellow-600 font-semibold text-sm
+                                      hover:text-yellow-700 transition">
+                                Baca
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
                     </div>
-                </div>
+                </article>
             @empty
                 <p class="text-center col-span-3 text-gray-500">
                     Belum ada artikel makanan khas.

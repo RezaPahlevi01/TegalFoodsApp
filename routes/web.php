@@ -14,7 +14,7 @@ use App\Http\Controllers\Umkm\ProductController;
 use App\Http\Controllers\Umkm\ProfileController;
 use App\Http\Controllers\Admin\AdminFoodBlogController;
 use App\Http\Controllers\BlogController;
-use App\Models\FoodBlog;
+use App\Http\Controllers\MenuViewController;
 
 Route::middleware(['auth:umkm', 'role:umkm'])->group(function () {
 
@@ -112,12 +112,9 @@ Route::get('/umkm/{id}', [UmkmController::class, 'show'])
 Route::get('/mitra-umkm', [MitraUmkmController::class, 'index'])->name('mitra.umkm');
 Route::get('/mitra-umkm/search', [MitraUmkmController::class, 'search'])->name('mitra.umkm.search');
 
-Route::get('/blog/{slug}', function ($slug) {
-    $blog = FoodBlog::where('slug',$slug)->where('status','published')->firstOrFail();
-    return view('blog.show', compact('blog'));
-});
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+Route::post('/menu/{makanan}/view', [MenuViewController::class, 'store'])->name('menu.view.store');
 /*
 |--------------------------------------------------------------------------
 | ADMIN PANEL
@@ -159,4 +156,3 @@ Route::prefix('admin')
             [AdminFoodBlogController::class, 'toggleStatus']
         );
     });
-

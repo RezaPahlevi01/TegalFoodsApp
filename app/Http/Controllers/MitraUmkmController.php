@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Umkm;
+use App\Services\AnalyticsService;
 use Illuminate\Http\Request;
 
 class MitraUmkmController extends Controller
 {
-    public function index()
+    public function index(Request $request, AnalyticsService $analytics)
     {
+        $analytics->trackWebVisit($request, 'mitra-umkm');
+
         $mitra = Umkm::latest()->get();
         return view('pages.mitra-umkm.index', compact('mitra'));
     }

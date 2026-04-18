@@ -7,13 +7,16 @@ use App\Models\Umkm;
 use App\Models\Slider;
 use App\Models\FoodBlog;
 use Illuminate\Http\Request;
+use App\Services\AnalyticsService;
 
 class HomeController extends Controller
 {
 
 
-public function index()
+public function index(Request $request, AnalyticsService $analytics)
 {
+    $analytics->trackWebVisit($request, 'home');
+
     $sliderFood = Slider::latest()->get();
     $listUmkm   = Umkm::with('makanans')->get();
     $menuPopuler = Makanan::latest()->take(4)->get();

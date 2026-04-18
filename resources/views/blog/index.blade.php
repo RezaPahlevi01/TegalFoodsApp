@@ -54,7 +54,7 @@
                 <div class="bg-white rounded-2xl shadow-md
                             hover:shadow-xl transition overflow-hidden">
 
-                    <img src="{{ asset('storage/' . $blog->image) }}"
+                    <img src="{{ $blog->image ? (\Illuminate\Support\Str::startsWith($blog->image, ['http://', 'https://']) ? $blog->image : asset('storage/' . $blog->image)) : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80' }}"
                          alt="{{ $blog->title }}"
                          class="w-full h-56 object-cover">
 

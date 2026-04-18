@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             UmkmSeeder::class,
             MakananSeeder::class,
+            FoodBlogSeeder::class,
         ]);
     }
 }
