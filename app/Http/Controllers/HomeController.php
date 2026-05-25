@@ -18,8 +18,8 @@ public function index(Request $request, AnalyticsService $analytics)
     $analytics->trackWebVisit($request, 'home');
 
     $sliderFood = Slider::latest()->get();
-    $listUmkm   = Umkm::with('makanans')->get();
-    $menuPopuler = Makanan::latest()->take(4)->get();
+    $listUmkm   = Umkm::with(['makanans' => fn ($query) => $query->available()])->get();
+    $menuPopuler = Makanan::with('umkm')->available()->latest()->take(4)->get();
     $blogs = FoodBlog::where('status', 'published')->latest()->take(3)->get();
 
     return view('welcome', compact(

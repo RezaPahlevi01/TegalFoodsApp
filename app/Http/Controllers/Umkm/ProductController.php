@@ -9,12 +9,32 @@ use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+    private function currentUmkm()
+    {
+        return Auth::guard('umkm')->user()->umkm;
+    }
+
+    private function redirectIfNoUmkmProfile()
+    {
+        if (!$this->currentUmkm()) {
+            return redirect()
+                ->route('umkm.profile.edit')
+                ->withErrors(['umkm' => 'Lengkapi profil UMKM terlebih dahulu.']);
+        }
+
+        return null;
+    }
+
     // =============================
     // LIST PRODUK UMKM
     // =============================
     public function index()
     {
-        $umkm = Auth::user()->umkm;
+        if ($redirect = $this->redirectIfNoUmkmProfile()) {
+            return $redirect;
+        }
+
+        $umkm = $this->currentUmkm();
 
         $products = Makanan::where('umkm_id', $umkm->id)->get();
 
@@ -26,6 +46,10 @@ class ProductController extends Controller
     // =============================
     public function create()
     {
+        if ($redirect = $this->redirectIfNoUmkmProfile()) {
+            return $redirect;
+        }
+
         return view('mitra.products.create');
     }
 
@@ -34,6 +58,10 @@ class ProductController extends Controller
     // =============================
     public function store(Request $request)
     {
+        if ($redirect = $this->redirectIfNoUmkmProfile()) {
+            return $redirect;
+        }
+
         $request->validate([
             'nama_makanan' => 'required',
             'harga' => 'required',
@@ -49,12 +77,13 @@ class ProductController extends Controller
         }
 
         Makanan::create([
-            'umkm_id' => auth()->user()->umkm->id, // atau session umkm kamu
+            'umkm_id' => $this->currentUmkm()->id,
             'nama_makanan' => $request->nama_makanan,
             'kategori' => $request->kategori,
             'harga' => $request->harga,
             'deskripsi' => $request->deskripsi,
-            'gambar_url' => $gambar
+            'gambar_url' => $gambar,
+            'is_available' => $request->boolean('is_available', true),
         ]); 
 
         return redirect()->route('umkm.products.index')
@@ -67,10 +96,14 @@ class ProductController extends Controller
     // =============================
     public function edit($id)
     {
+        if ($redirect = $this->redirectIfNoUmkmProfile()) {
+            return $redirect;
+        }
+
         $product = Makanan::findOrFail($id);
 
         // Security: hanya produk sendiri
-        if ($product->umkm_id != Auth::user()->umkm->id) {
+        if ($product->umkm_id != $this->currentUmkm()->id) {
             abort(403);
         }
 
@@ -82,9 +115,13 @@ class ProductController extends Controller
     // =============================
     public function update(Request $request, $id)
     {
+        if ($redirect = $this->redirectIfNoUmkmProfile()) {
+            return $redirect;
+        }
+
         $product = Makanan::findOrFail($id);
 
-        if ($product->umkm_id != Auth::user()->umkm->id) {
+        if ($product->umkm_id != $this->currentUmkm()->id) {
             abort(403);
         }
 
@@ -97,18 +134,15 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('gambar_url')) {
-
-            $file = $request->file('gambar_url');
-            $filename = time().'.'.$file->getClientOriginalExtension();
-            $file->storeAs('public/products', $filename);
-
-            $product->gambar_url = $filename;
+            $product->gambar_url = $request->file('gambar_url')
+                ->store('products', 'public');
         }
 
         $product->nama_makanan = $request->nama_makanan;
         $product->kategori = $request->kategori;
         $product->harga = $request->harga;
         $product->deskripsi = $request->deskripsi;
+        $product->is_available = $request->boolean('is_available', true);
         $product->save();
 
         return redirect()
@@ -121,14 +155,42 @@ class ProductController extends Controller
     // =============================
     public function destroy($id)
     {
+        if ($redirect = $this->redirectIfNoUmkmProfile()) {
+            return $redirect;
+        }
+
         $product = Makanan::findOrFail($id);
 
-        if ($product->umkm_id != Auth::user()->umkm->id) {
+        if ($product->umkm_id != $this->currentUmkm()->id) {
             abort(403);
         }
 
         $product->delete();
 
         return back()->with('success','Produk berhasil dihapus');
+    }
+
+    public function toggleAvailability($id)
+    {
+        if ($redirect = $this->redirectIfNoUmkmProfile()) {
+            return $redirect;
+        }
+
+        $product = Makanan::findOrFail($id);
+
+        if ($product->umkm_id != $this->currentUmkm()->id) {
+            abort(403);
+        }
+
+        $product->update([
+            'is_available' => !$product->is_available,
+        ]);
+
+        return back()->with(
+            'success',
+            $product->is_available
+                ? 'Produk ditampilkan ke user.'
+                : 'Produk disembunyikan dari user.'
+        );
     }
 }

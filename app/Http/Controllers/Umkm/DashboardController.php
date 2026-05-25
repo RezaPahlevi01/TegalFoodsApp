@@ -99,6 +99,8 @@ class DashboardController extends Controller
             'nomor_whatsapp' => 'required',
             'alamat' => 'required',
             'deskripsi' => 'nullable',
+            'jam_buka' => 'nullable|date_format:H:i',
+            'jam_tutup' => 'nullable|date_format:H:i',
             'logo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
@@ -128,6 +130,8 @@ class DashboardController extends Controller
             'nomor_whatsapp' => $request->nomor_whatsapp,
             'alamat' => $request->alamat,
             'deskripsi' => $request->deskripsi,
+            'jam_buka' => $request->jam_buka,
+            'jam_tutup' => $request->jam_tutup,
         ]);
 
         return redirect()

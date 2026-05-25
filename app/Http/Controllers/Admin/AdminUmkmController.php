@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Umkm;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class AdminUmkmController extends Controller
 {
@@ -28,10 +31,21 @@ class AdminUmkmController extends Controller
             'name'       => 'required|string|max:255',
             'password'   => 'required|string|min:6|confirmed',
             'role'       => 'required|string|in:umkm',
-            'email'    => 'required|string|max:255',
+            'email'      => 'required|email|max:255|unique:users,email',
         ]);
 
-        User::create(array_merge($data, ['role' => 'umkm', 'status' => 'pending']));
+        DB::transaction(function () use ($data): void {
+            $user = User::create(array_merge($data, ['role' => 'umkm', 'status' => 'active']));
+
+            Umkm::create([
+                'user_id' => $user->id,
+                'nama_umkm' => $user->name,
+                'nama_pemilik' => $user->name,
+                'alamat' => '-',
+                'nomor_whatsapp' => '-',
+            ]);
+        });
+
         return redirect()
             ->route('admin.umkm.index')
             ->with('success', 'UMKM berhasil ditambahkan');
@@ -49,10 +63,26 @@ class AdminUmkmController extends Controller
             'name'       => 'required|string|max:255',
             'password'   => 'nullable|string|min:6|confirmed',
             'role'       => 'required|string|in:umkm',
-            'email'    => 'required|string|max:255',
+            'email'      => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($umkm->id)],
         ]);
 
-        $umkm->update($data);
+        if (empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        DB::transaction(function () use ($umkm, $data): void {
+            $umkm->update($data);
+
+            if (!$umkm->umkm) {
+                Umkm::create([
+                    'user_id' => $umkm->id,
+                    'nama_umkm' => $umkm->name,
+                    'nama_pemilik' => $umkm->name,
+                    'alamat' => '-',
+                    'nomor_whatsapp' => '-',
+                ]);
+            }
+        });
 
         return redirect()
             ->route('admin.umkm.index')

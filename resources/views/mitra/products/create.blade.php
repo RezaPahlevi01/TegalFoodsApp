@@ -49,6 +49,16 @@
             <input type="file" name="gambar_url">
         </div>
 
+        <div class="mb-4">
+            <label class="flex items-center gap-2">
+                <input type="checkbox"
+                       name="is_available"
+                       value="1"
+                       checked>
+                <span>Produk aktif dan ditampilkan ke user</span>
+            </label>
+        </div>
+
         <button class="bg-green-600 text-white px-4 py-2 rounded">
             Simpan
         </button>

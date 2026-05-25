@@ -16,8 +16,15 @@ class ProfileController extends Controller
 
     public function store(Request $request)
     {
+        $userId = Auth::guard('umkm')->id() ?? Auth::id();
+
+        if (!$userId) {
+            return redirect()->route('umkm.login')
+                ->withErrors(['email' => 'Sesi login UMKM tidak valid. Silakan login ulang.']);
+        }
+
         Umkm::create([
-            'user_id' => Auth::id(),
+            'user_id' => $userId,
             'nama_umkm' => $request->nama_umkm,
             'nama_pemilik' => $request->nama_pemilik,
             'deskripsi' => $request->deskripsi,

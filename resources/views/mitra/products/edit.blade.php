@@ -58,6 +58,16 @@
             @endif
         </div>
 
+        <div class="mb-4">
+            <label class="flex items-center gap-2">
+                <input type="checkbox"
+                       name="is_available"
+                       value="1"
+                       {{ $product->is_available ? 'checked' : '' }}>
+                <span>Produk aktif dan ditampilkan ke user</span>
+            </label>
+        </div>
+
         <button class="bg-blue-600 text-white px-4 py-2 rounded">
             Update
         </button>

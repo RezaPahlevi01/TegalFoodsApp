@@ -15,6 +15,7 @@ use App\Http\Controllers\Umkm\ProfileController;
 use App\Http\Controllers\Admin\AdminFoodBlogController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\MenuViewController;
+use App\Http\Controllers\TegalChatbotController;
 
 Route::middleware(['auth:umkm', 'role:umkm'])->group(function () {
 
@@ -44,6 +45,9 @@ Route::middleware(['auth:umkm', 'role:umkm'])->group(function () {
 
     Route::put('/products/{id}',[ProductController::class,'update'])
         ->name('umkm.products.update');
+
+    Route::patch('/products/{id}/toggle-availability', [ProductController::class, 'toggleAvailability'])
+        ->name('umkm.products.toggle-availability');
 
     Route::delete('/products/{id}',[ProductController::class,'destroy'])
         ->name('umkm.products.destroy');
@@ -115,6 +119,8 @@ Route::get('/mitra-umkm/search', [MitraUmkmController::class, 'search'])->name('
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 Route::post('/menu/{makanan}/view', [MenuViewController::class, 'store'])->name('menu.view.store');
+Route::get('/chatbot/context', [TegalChatbotController::class, 'context'])->name('chatbot.context');
+Route::post('/chatbot', [TegalChatbotController::class, 'chat'])->name('chatbot.chat');
 /*
 |--------------------------------------------------------------------------
 | ADMIN PANEL

@@ -19,11 +19,21 @@ class Makanan extends Model
         'harga',
         'gambar_url',
         'kategori',
+        'is_available',
+    ];
+
+    protected $casts = [
+        'is_available' => 'boolean',
     ];
 
     // Relasi: Satu Makanan dimiliki OLEH SATU UMKM
     public function umkm()
     {
         return $this->belongsTo(Umkm::class);
+    }
+
+    public function scopeAvailable($query)
+    {
+        return $query->where('is_available', true);
     }
 }

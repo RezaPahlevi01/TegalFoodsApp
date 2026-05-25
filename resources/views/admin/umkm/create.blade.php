@@ -10,7 +10,7 @@
     <form action="{{ route('admin.umkm.store') }}" method="POST" class="space-y-4">
         @csrf
 
-        <input name="name" placeholder="Nama UMKM" class="w-full border p-3 rounded">
+        <input name="name" placeholder="Nama akun" class="w-full border p-3 rounded">
         <input name="email" type="email" placeholder="Email" class="w-full border p-3 rounded">
         <input name="role" type="hidden" value="umkm" class="w-full border p-3 rounded">
         <input name="password" type="password" placeholder="Password" class="w-full border p-3 rounded">

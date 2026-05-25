@@ -26,7 +26,7 @@ class UmkmController extends Controller
         // Cari UMKM berdasarkan ID, 
         // ambil juga relasi makanannya (eager loading)
         // 'findOrFail' akan otomatis error 404 jika ID tidak ditemukan
-        $umkm = Umkm::with('makanans')->findOrFail($id);
+        $umkm = Umkm::with(['makanans' => fn ($query) => $query->available()])->findOrFail($id);
 
         $analytics->trackWebVisit($request, 'umkm:' . $umkm->id);
         $analytics->trackUmkmView($umkm, $request);
