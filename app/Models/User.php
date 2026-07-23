@@ -64,4 +64,18 @@ class User extends Authenticatable
         return $this->hasOne(Umkm::class);
     }
 
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function order()
+    {
+        return $this->hasMany(Order::class);
+    }
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
 }

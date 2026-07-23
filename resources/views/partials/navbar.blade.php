@@ -22,11 +22,76 @@
           hover:after:w-full hover:text-yellow-400">Artikel</a></li>
     </ul>
 
-    <div class="hidden md:block">
-      <a href="{{ route('umkm.register') }}" class="relative z-50 px-4 py-2 text-white rounded-md hover:bg-yellow-400">
-        Daftar UMKM
-      </a>
-    </div>
+  <div class="hidden md:block relative">
+
+      @guest
+          <a href="{{ route('umkm.register') }}"
+            class="relative z-50 px-4 py-2 text-white rounded-md hover:bg-yellow-400">
+              Daftar UMKM
+          </a>
+      @else
+
+          @if(Auth::user()->role == 'user')
+
+              <button id="profileDropdownBtn"
+                  class="relative z-50 px-4 py-2 text-white rounded-md hover:bg-yellow-400 flex items-center gap-2">
+
+                  <img src="{{ asset('images/profile.png') }}"
+                      alt="Profile"
+                      class="w-5 h-5">
+
+                  <span>{{ Auth::user()->name }}</span>
+
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                      class="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor">
+
+                      <path stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M19 9l-7 7-7-7"/>
+                  </svg>
+
+              </button>
+
+              <div id="profileDropdown"
+                  class="hidden absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg z-50 overflow-hidden">
+
+                  <a href="{{ route('cart.index') }}"
+                      class="block px-4 py-3 text-gray-700 hover:bg-gray-100">
+                      🛒 Keranjang
+                  </a>
+
+                  <a href="{{ route('orders.index') }}"
+                      class="block px-4 py-3 text-gray-700 hover:bg-gray-100">
+                      📦 Pesanan Saya
+                  </a>
+
+                  <form action="{{ route('user.logout') }}" method="POST">
+                      @csrf
+
+                      <button type="submit"
+                          class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
+                          Logout
+                      </button>
+                  </form>
+
+              </div>
+
+          @else
+
+              <a href="{{ route('umkm.register') }}"
+                class="relative z-50 px-4 py-2 text-white rounded-md hover:bg-yellow-400">
+                  Daftar UMKM
+              </a>
+
+          @endif
+
+      @endguest
+
+  </div>
 
     <button id="menuBtn" class="md:hidden text-white text-2xl">
       ☰
@@ -59,7 +124,25 @@
 </nav>
 
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const btn = document.getElementById('profileDropdownBtn');
+    const menu = document.getElementById('profileDropdown');
+
+    if(btn){
+        btn.addEventListener('click', function(e){
+            e.stopPropagation();
+            menu.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', function(){
+            menu.classList.add('hidden');
+        });
+    }
+
+});
+</script>
 <script>
   let lastScrollTop = 0;
   const navbar = document.getElementById("navbar");

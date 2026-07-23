@@ -33,7 +33,7 @@
                 <img src="{{ asset('images/logo.png') }}" alt="TegalFood Logo" class="h-55 w-55 mr-2 object-contain">
             </a>
             <div>
-                <a href="/" class="text-brand-primary font-semibold hover:underline">
+                <a href="\welcome" class="text-brand-primary font-semibold hover:underline">
                     &larr; Kembali ke Beranda
                 </a>
             </div>

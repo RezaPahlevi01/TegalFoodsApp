@@ -51,6 +51,13 @@
         <ul class="space-y-4">
 
             <li>
+            <a href="{{ route('umkm.manage-orders.index') }}"
+            class="block font-medium
+                    {{ request()->routeIs('umkm.manage-orders.index') ? 'text-yellow-500' : '' }}">
+                    Pesanan
+                </a>
+            </li>
+            <li>
             <a href="{{ route('umkm.dashboard') }}"
             class="block font-medium
                     {{ request()->routeIs('umkm.dashboard') ? 'text-yellow-500' : '' }}">
@@ -69,6 +76,13 @@
                 <a href="{{ route('umkm.products.index') }}"
                    class="block font-medium {{ request()->routeIs('umkm.products.index') ? 'text-yellow-500' : '' }}">
                     Produk
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('umkm.report') }}"
+                   class="block font-medium {{ request()->routeIs('umkm.report') ? 'text-yellow-500' : '' }}">
+                    Laporan
                 </a>
             </li>
 

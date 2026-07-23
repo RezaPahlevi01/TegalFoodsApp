@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FoodBlog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class AdminFoodBlogController extends Controller
 {
@@ -54,19 +55,35 @@ class AdminFoodBlogController extends Controller
     public function update(Request $request, FoodBlog $foodblog)
     {
         $request->validate([
-            'title' => 'required',
+            'title'   => 'required',
             'content' => 'required',
-            'status' => 'required'
+            'status'  => 'required',
+            'image'   => 'nullable|image',
         ]);
+
+        $imagePath = $foodblog->image;
+
+        if ($request->hasFile('image')) {
+
+            // Hapus gambar lama
+            if ($foodblog->image && Storage::disk('public')->exists($foodblog->image)) {
+                Storage::disk('public')->delete($foodblog->image);
+            }
+
+            // Simpan gambar baru
+            $imagePath = $request->file('image')->store('food-blog', 'public');
+        }
 
         $foodblog->update([
-            'title' => $request->title,
-            'slug' => Str::slug($request->title),
+            'title'   => $request->title,
+            'slug'    => Str::slug($request->title),
             'content' => $request->content,
-            'status' => $request->status
+            'status'  => $request->status,
+            'image'   => $imagePath,
         ]);
 
-        return redirect()->route('admin.foodblog.index')
+        return redirect()   
+            ->route('admin.foodblog.index')
             ->with('success', 'Artikel berhasil diupdate');
     }
 

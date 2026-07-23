@@ -22,9 +22,12 @@ class Umkm extends Model
         'deskripsi',
         'nomor_whatsapp',
         'alamat',
+        'latitude',
+        'longitude',
         'logo_url',
         'jam_buka',
         'jam_tutup',
+        'foto_qris',
     ];
 
     protected $casts = [
@@ -58,5 +61,10 @@ class Umkm extends Model
         }
 
         return $now >= $open || $now <= $close;
+    }
+
+    public function order()
+    {
+        return $this->hasMany(Order::class);
     }
 }

@@ -89,8 +89,8 @@
             langsung dari ahlinya.
         </p>
 
-        <a href="/mitra-umkm"
-           class="px-10 py-3 rounded-lg bg-white/80 text-black font-semibold hover:bg-yellow-400">
+        <a href="{{ auth()->check() && auth()->user()->role === 'user' ? '/mitra-umkm' : '/login-user' }}"
+        class="px-10 py-3 rounded-lg bg-white/80 text-black font-semibold hover:bg-yellow-400">
             Pesan Sekarang
         </a>
     </div>

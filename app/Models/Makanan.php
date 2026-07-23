@@ -36,4 +36,14 @@ class Makanan extends Model
     {
         return $query->where('is_available', true);
     }
+
+    public function carts()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

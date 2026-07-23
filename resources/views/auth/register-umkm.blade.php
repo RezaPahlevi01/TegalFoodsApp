@@ -8,6 +8,7 @@
 
     <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
         @keyframes float {
         0% { transform: translateY(0px); }
@@ -67,7 +68,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('umkm.register.store') }}" method="POST">
+            <form action="{{ route('umkm.register.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <h3 class="font-semibold text-gray-700 mb-3">Data Akun</h3>
@@ -120,7 +121,24 @@
                         class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
                         placeholder="Alamat Lengkap UMKM"
                         required></textarea>
+                    <div>
 
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Upload QRIS
+                        </label>
+
+                        <input
+                            type="file"
+                            name="foto_qris"
+                            accept=".jpg,.jpeg,.png"
+                            required
+                            class="w-full border border-gray-300 rounded-xl px-4 py-3">
+
+                        <p class="text-xs text-gray-500 mt-2">
+                            Upload foto QRIS UMKM Anda (JPG/PNG maksimal 2 MB)
+                        </p>
+
+                    </div>
                 </div>
 
                 <button type="submit"
@@ -145,6 +163,5 @@
     </div>
 
 </div>
-
 </body>
 </html>

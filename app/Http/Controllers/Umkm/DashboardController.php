@@ -98,10 +98,13 @@ class DashboardController extends Controller
             'nama_pemilik' => 'required',
             'nomor_whatsapp' => 'required',
             'alamat' => 'required',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
             'deskripsi' => 'nullable',
             'jam_buka' => 'nullable|date_format:H:i',
             'jam_tutup' => 'nullable|date_format:H:i',
             'logo' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'foto_qris' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
         // ===============================
@@ -122,6 +125,23 @@ class DashboardController extends Controller
         }
 
         // ===============================
+        // UPLOAD QRIS
+        // ===============================
+        if ($request->hasFile('foto_qris')) {
+
+            // hapus foto_qris lama
+            if ($umkm->foto_qris) {
+                Storage::disk('public')->delete($umkm->foto_qris);
+            }
+
+            // simpan foto_qris baru
+            $path = $request->file('foto_qris')
+                ->store('umkm/qris', 'public');
+
+            $umkm->foto_qris = $path;
+        }
+
+        // ===============================
         // UPDATE DATA UMKM
         // ===============================
         $umkm->update([
@@ -129,6 +149,8 @@ class DashboardController extends Controller
             'nama_pemilik' => $request->nama_pemilik,
             'nomor_whatsapp' => $request->nomor_whatsapp,
             'alamat' => $request->alamat,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
             'deskripsi' => $request->deskripsi,
             'jam_buka' => $request->jam_buka,
             'jam_tutup' => $request->jam_tutup,

@@ -23,7 +23,7 @@
     <table class="w-full border">
         <thead class="bg-gray-100">
             <tr>
-                <th class="p-3 text-left">Nama UMKM</th>
+                <th class="p-3 text-left">Nama Pemilik UMKM</th>
                 <th class="p-3">Email</th>
                 <th class="p-3">Status</th>
                 <th class="p-3">Aksi</th>

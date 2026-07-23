@@ -43,9 +43,11 @@
     </header>
 
     <section class="container mx-auto px-4 sm:px-6 lg:px-8 mt-12">
-        <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg">
-            <div class="flex flex-col md:flex-row items-center gap-8">
+        <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg flex flex-col md:flex-row justify-between items-center gap-8">
+            
+            <div class="flex flex-col md:flex-row items-center gap-8 flex-1 w-full md:w-auto">
                 <img src="{{ asset('storage/' . $umkm->logo_url) }}" alt="{{ $umkm->nama_umkm }}" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-md flex-shrink-0">
+                
                 <div class="text-center md:text-left">
                     <h1 class="text-4xl font-bold text-brand-primary">{{ $umkm->nama_umkm }}</h1>
                     <p class="text-lg text-gray-700 mt-2">{{ $umkm->deskripsi }}</p>
@@ -72,9 +74,18 @@
                             <span>Alamat: {{ $umkm->alamat }}</span>
                         </div>
                     </div>
-
                 </div>
             </div>
+
+            <!-- <div class="flex-shrink-0 mt-6 md:mt-0 w-full md:w-auto flex justify-center md:justify-end">
+                <a href="https://wa.me/{{ $umkm->no_whatsapp }}" target="_blank" class="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white px-6 py-3 rounded-xl font-semibold shadow-md transition-colors w-full md:w-auto">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.49.652.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/>
+                    </svg>
+                    Hubungi Penjual
+                </a>
+            </div> -->
+
         </div>
     </section>
 
@@ -117,11 +128,52 @@
                         </div>
                     </div>
 
-                    <a href="https://wa.me/{{ $umkm->nomor_whatsapp }}?text=Halo%2C%20saya%20mau%20pesan%20{{ urlencode($makanan->nama_makanan) }}"
-                       target="_blank"
-                       class="mt-6 w-full text-center block py-3 px-4 rounded-lg font-semibold transition duration-300 {{ $umkm->isOpenNow() ? 'text-black hover:bg-yellow-500' : 'bg-gray-200 text-gray-500 pointer-events-none cursor-not-allowed' }}">
-                        Pesan via WhatsApp
-                    </a>
+                    <div class="flex gap-3">
+
+                        @guest
+
+                            <a href="{{ route('user.login') }}"
+                            class="w-full text-center bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-xl transition">
+
+                                + Keranjang
+
+                            </a>
+
+                        @else
+
+                            @if(Auth::user()->role == 'user')
+
+                                <form action="{{ route('cart.add',$makanan->id) }}"
+                                    method="POST"
+                                    class="w-full">
+
+                                    @csrf
+
+                                    <button
+                                        type="submit"
+                                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-xl transition">
+
+                                        + Keranjang
+
+                                    </button>
+
+                                </form>
+
+                            @else
+
+                                <button
+                                    onclick="alert('Hanya akun User yang dapat menambahkan menu ke keranjang.')"
+                                    class="w-full bg-gray-400 text-white px-6 py-3 rounded-xl cursor-not-allowed">
+
+                                    + Keranjang
+
+                                </button>
+
+                            @endif
+
+                        @endguest
+
+                    </div>
                 </div>
             </div>
             @endforeach

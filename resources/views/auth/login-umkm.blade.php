@@ -120,6 +120,14 @@
                 </a>
             </p>
 
+            <p class="text-sm text-center text-gray-500 mt-2">
+                Lupa password?
+                <a href="{{ route('password.request') }}"
+                   class="text-yellow-500 font-semibold hover:underline">
+                    Reset password
+                </a>
+            </p>
+
         </form>
     </div>
 

@@ -24,10 +24,13 @@
 
         <div class="mb-3">
             <label>Kategori</label>
-            <input type="text"
-                   name="kategori"
-                   class="w-full border p-2 rounded"
-                   required>
+            <select name="kategori" class="w-full border p-2 rounded" required>
+                <option value="" disabled selected>Pilih Kategori...</option>
+                <option value="Makanan Berat">Makanan Berat</option>
+                <option value="Camilan">Camilan</option>
+                <option value="Makanan Penutup">Makanan Penutup</option>
+                <option value="Lainnya">Lainnya</option>
+            </select>
         </div>
 
         <div class="mb-3">

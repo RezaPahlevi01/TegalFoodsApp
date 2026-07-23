@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UmkmController;
@@ -11,13 +10,66 @@ use App\Http\Controllers\Admin\AdminUmkmController;
 use App\Http\Controllers\Admin\AdminSliderController;
 use App\Http\Controllers\Umkm\DashboardController;
 use App\Http\Controllers\Umkm\ProductController;
-use App\Http\Controllers\Umkm\ProfileController;
 use App\Http\Controllers\Admin\AdminFoodBlogController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\MenuViewController;
 use App\Http\Controllers\TegalChatbotController;
+use App\Http\Controllers\User\CartController;
+use App\Http\Controllers\User\CheckoutController;
+use App\Http\Controllers\User\PaymentController;
+use App\Http\Controllers\User\OrderController;
+use App\Http\Controllers\User\UserProfileController;
+use App\Http\Controllers\Umkm\UmkmOrderController;
+use App\Http\Controllers\Umkm\UmkmReportController;
+use App\Http\Controllers\Admin\AdminReportController;
 
+
+
+
+
+Route::get('/welcome', [HomeController::class, 'index'])->name('welcome');
+/*
+|--------------------------------------------------------------------------
+| USER AUTH
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/login-user',
+    [AuthController::class,'showLoginUser'])
+    ->name('user.login');
+
+Route::post('/login-user',
+    [AuthController::class,'authenticateUser'])
+    ->name('user.login.process');
+
+Route::get('/register-user',
+    [AuthController::class,'showRegisterUser'])
+    ->name('user.register');
+
+Route::post('/register-user',
+    [AuthController::class,'registerUser'])
+    ->name('user.register.store');
+
+Route::post('/logout-user',
+    [AuthController::class,'logoutUser'])
+    ->name('user.logout');
+
+Route::get('/auth/user/google',
+    [AuthController::class,'redirectUserGoogle'])
+    ->name('user.google.redirect');
+
+Route::get('/auth/user/google/callback',
+    [AuthController::class,'handleUserGoogleCallback'])
+    ->name('user.google.callback');
+
+    //ROUTE UMKM
 Route::middleware(['auth:umkm', 'role:umkm'])->group(function () {
+    
+    Route::get('/umkm/manage-orders', [UmkmOrderController::class, 'index'])->name('umkm.manage-orders.index');
+
+    Route::get('/umkm/manage-orders/{id}', [UmkmOrderController::class, 'show'])->name('umkm.manage-orders.show');
+
+    Route::post('/umkm/manage-orders/{id}/status', [UmkmOrderController::class, 'updateStatus'])->name('umkm.manage-orders.updateStatus');
 
     Route::get('/umkm/dashboard',
         [DashboardController::class,'index']
@@ -51,6 +103,14 @@ Route::middleware(['auth:umkm', 'role:umkm'])->group(function () {
 
     Route::delete('/products/{id}',[ProductController::class,'destroy'])
         ->name('umkm.products.destroy');
+
+    Route::get('/umkm/report', [UmkmReportController::class, 'index'])
+        ->name('umkm.report');
+
+    Route::get(
+    '/umkm/report/pdf',
+    [UmkmReportController::class,'exportPdf']
+        )->name('umkm.report.pdf');
 });
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +126,8 @@ Route::get('/login-umkm', function () {
     return view('auth.login-umkm');
 })->name('umkm.login');
 
+
+
 // LOGIN PROCESS
 Route::post('/login-admin', [AuthController::class, 'authenticateAdmin'])
     ->name('admin.login.process');
@@ -78,7 +140,7 @@ Route::post('/logout-admin', [AuthController::class, 'logoutAdmin'])
 
 Route::post('/logout-umkm', [AuthController::class, 'logoutUmkm'])
     ->name('umkm.logout');
-
+    
 // REGISTER UMKM
 Route::get('/register-umkm', [AuthController::class, 'showRegisterUmkm'])
     ->name('umkm.register');
@@ -107,7 +169,6 @@ Route::get('/auth/umkm/google/callback', [AuthController::class, 'handleGoogleCa
 | PUBLIC
 |--------------------------------------------------------------------------
 */
-Route::get('/', [HomeController::class, 'index'])->name('welcome');
 
 Route::get('/umkm/{id}', [UmkmController::class, 'show'])
     ->whereNumber('id')
@@ -161,4 +222,64 @@ Route::prefix('admin')
         Route::patch('/admin/foodblog/{id}/toggle-status',
             [AdminFoodBlogController::class, 'toggleStatus']
         );
+        Route::get('/reports', [AdminReportController::class, 'index'])
+            ->name('report.index');
     });
+
+
+Route::middleware('auth')->group(function () {
+    
+    Route::get('/dashboard', [HomeController::class, 'dashboard'])
+        ->name('dashboard');
+
+    Route::post('/cart/add/{makanan}',
+        [CartController::class, 'add'])
+        ->name('cart.add');
+
+    Route::get('/cart',
+        [CartController::class, 'index'])
+        ->name('cart.index');
+
+    Route::delete('/cart/{cart}',
+        [CartController::class, 'destroy'])
+        ->name('cart.delete');
+    Route::get('/checkout',
+        [CheckoutController::class, 'index'])
+        ->name('checkout.index');
+
+    Route::post('/checkout',
+        [CheckoutController::class, 'store'])
+        ->name('checkout.store');
+    Route::get(
+        '/payment/{order}',
+        [PaymentController::class, 'show']
+        )->name('payment.show');
+
+    Route::post(
+        '/payment/{order}',
+        [PaymentController::class, 'upload']
+        )->name('payment.upload');
+      
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->name('orders.index');
+
+    Route::get('/orders/{order}', [OrderController::class, 'show'])
+        ->name('orders.show');
+
+    Route::put('/profile/update',[UserProfileController::class,'update'])
+        ->name('profile.update');
+
+});
+
+// FORGOT PASSWORD USER + UMKM
+Route::get('/forgot-password', [AuthController::class, 'showForgotForm'])
+    ->name('password.request');
+
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])
+    ->name('password.email');
+
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetForm'])
+    ->name('password.reset');
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+    ->name('password.update');
