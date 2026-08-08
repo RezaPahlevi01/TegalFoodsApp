@@ -26,14 +26,11 @@ use App\Http\Controllers\Admin\AdminReportController;
 
 
 
-
 Route::get('/', function () {
     return redirect('/welcome');
 });
 
-Route::get('/welcome', function () {
-    return view('welcome');
-});
+Route::get('/welcome', [HomeController::class, 'index'])->name('welcome');
 /*
 |--------------------------------------------------------------------------
 | USER AUTH
