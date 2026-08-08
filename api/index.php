@@ -1,40 +1,26 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+use Illuminate\Http\Request;
 
-header('Content-Type: text/plain');
+require __DIR__ . '/../vendor/autoload.php';
 
-try {
-    require __DIR__ . '/../vendor/autoload.php';
+$app = require_once __DIR__ . '/../bootstrap/app.php';
 
-    echo "1. Autoload OK\n";
+$storagePath = '/tmp/laravel-storage';
 
-    $app = require __DIR__ . '/../bootstrap/app.php';
-
-    echo "2. Bootstrap OK\n";
-
-    echo '3. ViewServiceProvider: ';
-    echo class_exists(\Illuminate\View\ViewServiceProvider::class)
-        ? "EXISTS\n"
-        : "MISSING\n";
-
-    echo '4. View binding: ';
-
-    try {
-        echo $app->make('view') ? "EXISTS\n" : "MISSING\n";
-    } catch (\Throwable $e) {
-        echo "FAILED\n";
-        echo $e->getMessage() . "\n";
+foreach ([
+    $storagePath,
+    $storagePath . '/app',
+    $storagePath . '/framework/cache',
+    $storagePath . '/framework/sessions',
+    $storagePath . '/framework/views',
+    $storagePath . '/logs',
+] as $directory) {
+    if (!is_dir($directory)) {
+        mkdir($directory, 0777, true);
     }
-
-    echo "5. Finished\n";
-
-} catch (\Throwable $e) {
-    http_response_code(500);
-
-    echo "\nERROR:\n";
-    echo $e->getMessage() . "\n\n";
-    echo $e->getFile() . ':' . $e->getLine() . "\n\n";
-    echo $e->getTraceAsString();
 }
+
+$app->useStoragePath($storagePath);
+
+$app->handleRequest(Request::capture());
