@@ -27,7 +27,13 @@ use App\Http\Controllers\Admin\AdminReportController;
 
 
 
-Route::get('/welcome', [HomeController::class, 'index'])->name('welcome');
+Route::get('/', function () {
+    return redirect('/welcome');
+});
+
+Route::get('/welcome', function () {
+    return view('welcome');
+});
 /*
 |--------------------------------------------------------------------------
 | USER AUTH
