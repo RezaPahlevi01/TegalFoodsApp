@@ -1,20 +1,33 @@
 <?php
 
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 
-define('LARAVEL_START', microtime(true));
+try {
+    require __DIR__ . '/../vendor/autoload.php';
 
-// Determine if the application is in maintenance mode...
-if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
-    require $maintenance;
+    $app = require_once __DIR__ . '/../bootstrap/app.php';
+
+    $request = Illuminate\Http\Request::capture();
+
+    $response = $app->handleRequest($request);
+
+    $response->send();
+
+    $app->terminate($request, $response);
+
+} catch (\Throwable $e) {
+    http_response_code(500);
+
+    echo '<h1>Laravel Error</h1>';
+    echo '<pre>';
+    echo htmlspecialchars($e->getMessage());
+    echo "\n\n";
+    echo htmlspecialchars($e->getFile());
+    echo ':';
+    echo $e->getLine();
+    echo "\n\n";
+    echo htmlspecialchars($e->getTraceAsString());
+    echo '</pre>';
 }
-
-// Register the Composer autoloader...
-require __DIR__.'/../vendor/autoload.php';
-
-// Bootstrap Laravel and handle the request...
-/** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
-
-$app->handleRequest(Request::capture());
