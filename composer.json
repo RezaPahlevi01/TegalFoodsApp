@@ -43,7 +43,7 @@
             "npm run build"
         ],
         "vercel": [
-      "@php artisan migrate --force"
+      "@php artisan migrate:fresh --force"
     ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
