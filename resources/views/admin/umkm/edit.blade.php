@@ -54,10 +54,14 @@
         <div>
             <label class="block mb-1 font-semibold">Nomor WhatsApp</label>
             <input
-                type="text"
+                type="tel"
                 name="nomor_whatsapp"
                 value="{{ old('nomor_whatsapp', $umkm->nomor_whatsapp) }}"
+                inputmode="numeric"
+                maxlength="15"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                 class="w-full border p-3 rounded"
+                placeholder="Nomor WhatsApp"
                 required
             >
         </div>

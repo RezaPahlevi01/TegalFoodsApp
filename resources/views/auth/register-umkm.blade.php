@@ -112,7 +112,10 @@
                         placeholder="Nama Pemilik Usaha"
                         required>
 
-                    <input type="text" name="nomor_whatsapp"
+                    <input type="tel" name="nomor_whatsapp"
+                        inputmode="numeric"
+                        maxlength="15"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                         class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-yellow-400 outline-none transition"
                         placeholder="Nomor WhatsApp"
                         required>

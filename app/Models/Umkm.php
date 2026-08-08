@@ -30,10 +30,7 @@ class Umkm extends Model
         'foto_qris',
     ];
 
-    protected $casts = [
-        'jam_buka' => 'datetime:H:i',
-        'jam_tutup' => 'datetime:H:i',
-    ];
+    protected $casts = [];
 
     // Relasi: Satu UMKM memiliki BANYAK Makanan
     public function makanans()
@@ -48,19 +45,22 @@ class Umkm extends Model
 
     public function isOpenNow(): bool
     {
-        if (!$this->jam_buka || !$this->jam_tutup) {
+        $openRaw = $this->getRawOriginal('jam_buka');
+        $closeRaw = $this->getRawOriginal('jam_tutup');
+
+        if (!$openRaw || !$closeRaw) {
             return true;
         }
 
-        $now = Carbon::now()->format('H:i:s');
-        $open = Carbon::parse($this->jam_buka)->format('H:i:s');
-        $close = Carbon::parse($this->jam_tutup)->format('H:i:s');
+        $now = Carbon::now('Asia/Jakarta');
+        $open = Carbon::parse($openRaw, 'Asia/Jakarta');
+        $close = Carbon::parse($closeRaw, 'Asia/Jakarta');
 
-        if ($open <= $close) {
-            return $now >= $open && $now <= $close;
+        if ($open->lessThan($close)) {
+            return $now->between($open, $close);
         }
 
-        return $now >= $open || $now <= $close;
+        return $now->gte($open) || $now->lte($close);
     }
 
     public function order()

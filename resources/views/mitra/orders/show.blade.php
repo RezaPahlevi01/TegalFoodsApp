@@ -47,9 +47,9 @@
     {{-- BUKTI PEMBAYARAN --}}
     <h3 class="text-lg font-semibold mt-6">Bukti Pembayaran</h3>
 
-    @if($order->payment_proof)
-        <a href="{{ asset($order->payment_proof) }}" target="_blank">
-            <img src="{{ asset($order->payment_proof) }}"
+    @if($order->payment && $order->payment->bukti_bayar)
+        <a href="{{ asset('storage/' . $order->payment->bukti_bayar) }}" target="_blank">
+            <img src="{{ asset('storage/' . $order->payment->bukti_bayar) }}"
                  class="w-64 mt-2 border rounded shadow">
         </a>
     @else

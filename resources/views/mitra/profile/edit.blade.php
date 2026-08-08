@@ -91,9 +91,13 @@
                     </label>
 
                     <input
-                        type="text"
+                        type="tel"
                         name="nomor_whatsapp"
                         value="{{ old('nomor_whatsapp',$umkm->nomor_whatsapp) }}"
+                        inputmode="numeric"
+                        maxlength="15"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                        placeholder="Nomor WhatsApp"
                         class="w-full rounded-xl border-gray-300 focus:border-green-500 focus:ring-green-500">
                 </div>
 

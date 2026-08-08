@@ -48,23 +48,21 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'user',
-            'status' => 'active',
-            'email_verified_at' => now()
+            'status' => 'pending',
         ]);
 
         UserProfile::create([
-
             'user_id'=>$user->id,
-
             'nama_lengkap'=>$request->name,
-
             'nomor_telepon'=>$request->nomor_telepon
-
         ]);
 
+        $this->issueOtpForUser($user);
+        session(['otp_email' => $user->email]);
+
         return redirect()
-            ->route('user.login')
-            ->with('success', 'Registrasi berhasil. Silakan login.');
+            ->route('otp.form')
+            ->with('success', 'Pendaftaran berhasil. OTP verifikasi telah dikirim ke email.');
     }
 
     public function authenticateUser(Request $request)
@@ -84,6 +82,17 @@ class AuthController extends Controller
                 return back()->withErrors([
                     'email' => 'Akun ini bukan akun pembeli'
                 ]);
+            }
+
+            if ($user->status !== 'active') {
+
+                Auth::logout();
+
+                session(['otp_email' => $user->email]);
+                $this->issueOtpForUser($user);
+
+                return redirect()->route('otp.form')
+                    ->withErrors(['email' => 'Akun belum diverifikasi. OTP baru sudah dikirim ke email Anda.']);
             }
 
             return redirect()->route('welcome');
@@ -240,7 +249,7 @@ class AuthController extends Controller
             'nama_umkm' => 'required',
             'nama_pemilik' => 'required',
             'alamat' => 'required',
-            'nomor_whatsapp' => 'required',
+            'nomor_whatsapp' => 'required|numeric|digits_between:10,15',
             'foto_qris' => 'required|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
@@ -291,10 +300,13 @@ class AuthController extends Controller
                 ->withErrors(['email' => 'Sesi OTP tidak valid. Silakan login ulang.']);
         }
 
-        $user = User::where('email', $email)->where('role', 'umkm')->first();
+        $user = User::where('email', $email)
+            ->whereIn('role', ['user', 'umkm'])
+            ->first();
+
         if (!$user) {
             return redirect()->route('umkm.login')
-                ->withErrors(['email' => 'Akun UMKM tidak ditemukan.']);
+                ->withErrors(['email' => 'Akun tidak ditemukan.']);
         }
 
         if (
@@ -317,10 +329,17 @@ class AuthController extends Controller
         ]);
 
         session()->forget('otp_email');
-        Auth::guard('umkm')->login($user);
-        $request->session()->regenerate();
 
-        return redirect()->route('umkm.dashboard')
+        if ($user->role === 'umkm') {
+            Auth::guard('umkm')->login($user);
+            $request->session()->regenerate();
+            return redirect()->route('umkm.dashboard')
+                ->with('success', 'Verifikasi OTP berhasil. Selamat datang!');
+        }
+
+        Auth::login($user);
+        $request->session()->regenerate();
+        return redirect()->route('dashboard')
             ->with('success', 'Verifikasi OTP berhasil. Selamat datang!');
     }
 
@@ -332,10 +351,13 @@ class AuthController extends Controller
                 ->withErrors(['email' => 'Sesi OTP tidak ditemukan.']);
         }
 
-        $user = User::where('email', $email)->where('role', 'umkm')->first();
+        $user = User::where('email', $email)
+            ->whereIn('role', ['user', 'umkm'])
+            ->first();
+
         if (!$user) {
             return redirect()->route('umkm.login')
-                ->withErrors(['email' => 'Akun UMKM tidak ditemukan.']);
+                ->withErrors(['email' => 'Akun tidak ditemukan.']);
         }
 
         $this->issueOtpForUser($user);
@@ -447,12 +469,14 @@ class AuthController extends Controller
             'otp_expired_at' => Carbon::now()->addMinutes(self::OTP_TTL_MINUTES),
         ]);
 
+        $label = $user->role === 'umkm' ? 'UMKM' : 'TegalFood';
+
         try {
             Mail::raw(
-                "Kode OTP verifikasi akun UMKM Anda adalah: {$otp}. Berlaku selama " . self::OTP_TTL_MINUTES . " menit.",
-                function ($message) use ($user): void {
+                "Kode OTP verifikasi akun {$label} Anda adalah: {$otp}. Berlaku selama " . self::OTP_TTL_MINUTES . " menit.",
+                function ($message) use ($user, $label): void {
                     $message->to($user->email)
-                        ->subject('OTP Verifikasi Akun UMKM');
+                        ->subject("OTP Verifikasi Akun {$label}");
                 }
             );
         } catch (Throwable $e) {

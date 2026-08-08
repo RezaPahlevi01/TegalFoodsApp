@@ -14,7 +14,7 @@ class UserProfileController extends Controller
 {
     $request->validate([
         'name'=>'required',
-        'nomor_telepon'=>'required',
+        'nomor_telepon'=>'required|numeric|digits_between:10,15',
         'alamat'=>'required',
         'latitude'=>'nullable|numeric',
         'longitude'=>'nullable|numeric'

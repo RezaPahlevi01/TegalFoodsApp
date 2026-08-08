@@ -11,13 +11,21 @@ use Illuminate\Validation\Rule;
 
 class AdminUmkmController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $umkms = User::where('role', 'umkm')
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(10);
+        $search = $request->input('search', '');
 
-        return view('admin.umkm.index', compact('umkms'));
+        $umkms = User::where('role', 'umkm')
+                    ->when($search, function ($q) use ($search) {
+                        $q->whereHas('umkm', function ($q2) use ($search) {
+                            $q2->where('nama_pemilik', 'ilike', "%{$search}%");
+                        });
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(10)
+                    ->appends(['search' => $search]);
+
+        return view('admin.umkm.index', compact('umkms', 'search'));
     }
 
     public function create()

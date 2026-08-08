@@ -14,6 +14,28 @@
         </a>
     </div>
 
+    <form method="GET" action="{{ route('admin.umkm.index') }}" class="mb-6">
+        <div class="flex gap-2">
+            <input
+                type="text"
+                name="search"
+                value="{{ $search }}"
+                placeholder="Cari nama pemilik UMKM..."
+                class="flex-1 max-w-md px-4 py-2 border rounded-lg focus:ring-2 focus:ring-yellow-400 focus:outline-none">
+            <button
+                type="submit"
+                class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700">
+                Cari
+            </button>
+            @if($search)
+                <a href="{{ route('admin.umkm.index') }}"
+                   class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                    Reset
+                </a>
+            @endif
+        </div>
+    </form>
+
     @if(session('success'))
         <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
             {{ session('success') }}

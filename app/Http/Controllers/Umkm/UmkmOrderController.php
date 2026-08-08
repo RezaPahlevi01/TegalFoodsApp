@@ -28,7 +28,7 @@ class UmkmOrderController extends Controller
     {
         $umkmId = auth()->user()->umkm->id;
 
-        $order = Order::with(['user', 'items.makanan'])
+        $order = Order::with(['user', 'items.makanan', 'payment'])
             ->whereHas('items.makanan', function ($q) use ($umkmId) {
                 $q->where('umkm_id', $umkmId);
             })

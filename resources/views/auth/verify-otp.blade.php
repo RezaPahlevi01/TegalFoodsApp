@@ -21,7 +21,7 @@
             <div class="card shadow">
 
                 <div class="card-header bg-success text-white text-center">
-                    <h5 class="mb-0">Verifikasi Email UMKM</h5>
+                    <h5 class="mb-0">Verifikasi Email</h5>
                     <small>Masukkan kode OTP yang dikirim ke email Anda</small>
                 </div>
 

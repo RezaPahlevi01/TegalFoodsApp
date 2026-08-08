@@ -113,9 +113,13 @@
                 </label>
 
                 <input
-                    type="text"
+                    type="tel"
                     name="nomor_telepon"
                     value="{{ old('nomor_telepon', optional(Auth::user()->profile)->nomor_telepon) }}"
+                    inputmode="numeric"
+                    maxlength="15"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    placeholder="Nomor telepon"
                     class="w-full mt-2 border rounded-xl p-3"
                     required>
 

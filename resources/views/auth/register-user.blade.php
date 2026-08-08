@@ -132,10 +132,14 @@
                 </label>
 
                 <input
-                    type="text"
+                    type="tel"
                     name="nomor_telepon"
                     value="{{ old('nomor_telepon') }}"
+                    inputmode="numeric"
+                    maxlength="15"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                     class="w-full border border-gray-300 p-3 rounded-lg"
+                    placeholder="Nomor Telepon"
                     required>
 
             </div>
