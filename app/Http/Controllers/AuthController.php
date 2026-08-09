@@ -250,7 +250,7 @@ class AuthController extends Controller
             'nama_pemilik' => 'required',
             'alamat' => 'required',
             'nomor_whatsapp' => 'required|numeric|digits_between:10,15',
-            'foto_qris' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+            'foto_qris' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         $user = User::create([
@@ -261,13 +261,22 @@ class AuthController extends Controller
             'status' => 'pending'
         ]);
 
+        $qrisPath = null;
+        if ($request->hasFile('foto_qris')) {
+            try {
+                $qrisPath = $request->file('foto_qris')->store('qris', 'public');
+            } catch (\Throwable $e) {
+                // Vercel filesystem read-only, skip upload
+            }
+        }
+
         Umkm::create([
             'user_id' => $user->id,
             'nama_umkm' => $request->nama_umkm,
             'nama_pemilik' => $request->nama_pemilik,
             'alamat' => $request->alamat,
             'nomor_whatsapp' => $request->nomor_whatsapp,
-            'foto_qris' => $request->file('foto_qris')->store('qris', 'public')
+            'foto_qris' => $qrisPath,
         ]);
 
         $this->issueOtpForUser($user);
@@ -482,6 +491,7 @@ class AuthController extends Controller
         } catch (Throwable $e) {
             Log::warning('OTP email could not be sent.', [
                 'user_id' => $user->id,
+                'otp_code' => $otp,
                 'error' => $e->getMessage(),
             ]);
         }
