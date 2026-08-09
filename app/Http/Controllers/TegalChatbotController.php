@@ -55,11 +55,14 @@ class TegalChatbotController extends Controller
         try {
             return response()->json($this->buildContext());
         } catch (Throwable $e) {
-            Log::error('Chatbot context error: ' . $e->getMessage());
+            Log::error('Chatbot context error: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+            ]);
             return response()->json([
                 'stores' => [],
                 'products' => [],
                 'open_stores' => [],
+                'error' => $e->getMessage(),
             ]);
         }
     }
