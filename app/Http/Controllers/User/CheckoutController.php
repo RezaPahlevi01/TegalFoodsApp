@@ -19,11 +19,19 @@ class CheckoutController extends Controller
             ->where('user_id', Auth::id())
             ->get();
 
+        if ($carts->isEmpty()) {
+            return back()->with('error', 'Keranjang kosong');
+        }
+
         $total = $carts->sum(function ($item) {
             return $item->qty * $item->harga;
         });
 
         $profile = Auth::user()->profile;
+
+        if (!$profile) {
+            return back()->with('error', 'Lengkapi profil Anda terlebih dahulu.');
+        }
 
         return view(
             'user.checkout',
