@@ -227,6 +227,10 @@ Route::prefix('admin')
         );
         Route::get('/reports', [AdminReportController::class, 'index'])
             ->name('report.index');
+
+        // SEMENTARA: upload gambar warteg
+        Route::get('/warteg/upload-images', [\App\Http\Controllers\Admin\AdminWartegImageController::class, 'upload'])
+            ->name('warteg.upload-images');
     });
 
 
