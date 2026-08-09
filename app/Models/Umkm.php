@@ -52,15 +52,19 @@ class Umkm extends Model
             return true;
         }
 
-        $now = Carbon::now('Asia/Jakarta');
-        $open = Carbon::parse($openRaw, 'Asia/Jakarta');
-        $close = Carbon::parse($closeRaw, 'Asia/Jakarta');
+        try {
+            $now = Carbon::now('Asia/Jakarta');
+            $open = Carbon::parse($openRaw, 'Asia/Jakarta');
+            $close = Carbon::parse($closeRaw, 'Asia/Jakarta');
 
-        if ($open->lessThan($close)) {
-            return $now->between($open, $close);
+            if ($open->lessThan($close)) {
+                return $now->between($open, $close);
+            }
+
+            return $now->gte($open) || $now->lte($close);
+        } catch (\Throwable $e) {
+            return true;
         }
-
-        return $now->gte($open) || $now->lte($close);
     }
 
     public function order()

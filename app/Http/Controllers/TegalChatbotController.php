@@ -6,6 +6,7 @@ use App\Models\Makanan;
 use App\Models\Umkm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class TegalChatbotController extends Controller
@@ -51,7 +52,16 @@ class TegalChatbotController extends Controller
 
     public function context()
     {
-        return response()->json($this->buildContext());
+        try {
+            return response()->json($this->buildContext());
+        } catch (Throwable $e) {
+            Log::error('Chatbot context error: ' . $e->getMessage());
+            return response()->json([
+                'stores' => [],
+                'products' => [],
+                'open_stores' => [],
+            ]);
+        }
     }
 
     private function fallbackReply(string $message): string
@@ -102,7 +112,7 @@ class TegalChatbotController extends Controller
                     'nomor_whatsapp' => $umkm->nomor_whatsapp,
                     'jam_buka' => $umkm->getRawOriginal('jam_buka'),
                     'jam_tutup' => $umkm->getRawOriginal('jam_tutup'),
-                    'is_open' => $umkm->isOpenNow(),
+                    'is_open' => (bool) $umkm->isOpenNow(),
                     'products' => $umkm->makanans->map(function (Makanan $makanan) use ($umkm) {
                         return [
                             'id' => $makanan->id,
