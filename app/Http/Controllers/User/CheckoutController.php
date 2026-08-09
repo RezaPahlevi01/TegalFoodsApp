@@ -29,8 +29,9 @@ class CheckoutController extends Controller
 
         $profile = Auth::user()->profile;
 
-        if (!$profile) {
-            return back()->with('error', 'Lengkapi profil Anda terlebih dahulu.');
+        if (!$profile || !$profile->latitude || !$profile->longitude) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Anda belum mengatur lokasi. Silakan lengkapi profil lokasi terlebih dahulu.');
         }
 
         return view(
