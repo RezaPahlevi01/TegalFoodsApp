@@ -40,7 +40,7 @@
                 <tr class="border-b">
                     <td class="p-3">
                         @if($makanan->gambar_url)
-                            <img src="{{ asset('storage/' . $makanan->gambar_url) }}"
+                            <img src="{{ $media_url($makanan->gambar_url) }}"
                                  class="w-16 h-16 object-cover rounded-lg border">
                         @else
                             -

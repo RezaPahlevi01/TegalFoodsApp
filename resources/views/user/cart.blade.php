@@ -34,7 +34,7 @@
 
                     <td class="p-4 flex items-center gap-4">
 
-                        <img src="{{ asset('storage/'.$cart->makanan->gambar_url) }}"
+                        <img src="{{ $media_url($cart->makanan->gambar_url) }}"
                              class="w-20 h-20 rounded-lg object-cover">
 
                         <div>

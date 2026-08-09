@@ -222,7 +222,7 @@
                     @if($umkm->logo_url)
 
                         <img
-                            src="{{ asset('storage/'.$umkm->logo_url) }}"
+                            src="{{ $media_url($umkm->logo_url) }}"
                             class="w-40 h-40 rounded-2xl object-cover border shadow mb-4">
 
                     @else
@@ -253,7 +253,7 @@
                     @if($umkm->foto_qris)
 
                         <img
-                            src="{{ asset('storage/'.$umkm->foto_qris) }}"
+                            src="{{ $media_url($umkm->foto_qris) }}"
                             class="w-40 h-40 rounded-2xl object-contain border shadow mb-4">
 
                     @else

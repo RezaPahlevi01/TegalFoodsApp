@@ -12,7 +12,7 @@
     <div class="flex items-center gap-6 mb-6">
         <div>
             @if($umkm->logo_url)
-                <img src="{{ asset('storage/'.$umkm->logo_url) }}"
+                <img src="{{ $media_url($umkm->logo_url) }}"
                      class="w-24 h-24 rounded-full object-cover border">
             @else
                 <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">

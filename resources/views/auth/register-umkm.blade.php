@@ -134,10 +134,11 @@
                             type="file"
                             name="foto_qris"
                             accept=".jpg,.jpeg,.png"
+                            required
                             class="w-full border border-gray-300 rounded-xl px-4 py-3">
 
                         <p class="text-xs text-gray-500 mt-2">
-                            Upload foto QRIS UMKM Anda (JPG/PNG maksimal 2 MB) - Bisa diisi nanti dari profil
+                            Upload foto QRIS UMKM Anda (JPG/PNG maksimal 2 MB)
                         </p>
 
                     </div>

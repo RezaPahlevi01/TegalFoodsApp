@@ -66,7 +66,7 @@
         <div class="swiper-wrapper h-full">
             @forelse ($sliderFood as $slider)
                 <div class="swiper-slide bg-cover bg-center"
-                     style="background-image: url('{{ asset('storage/' . $slider->gambar) }}')">
+                     style="background-image: url('{{ $media_url($slider->gambar) }}')">
                 </div>
             @empty
                 <div class="swiper-slide bg-cover bg-center"
@@ -108,7 +108,7 @@
                     <div class="snap-center shrink-0 w-[260px]">
                         <div class="relative bg-[#FDEEC8] rounded-2xl pt-28 pb-8 px-4 text-center shadow-lg transition-all duration-300 hover:-translate-y-3 hover:shadow-2xl">
                             <div class="absolute -top-20 left-1/2 -translate-x-1/2 w-40 h-40 rounded-full bg-white shadow-xl flex items-center justify-center">
-                                <img src="{{ asset('storage/' . $slider->gambar) }}"
+                                <img src="{{ $media_url($slider->gambar) }}"
                                      alt="{{ $slider->title }}"
                                      class="w-36 h-36 rounded-full object-cover">
                             </div>
@@ -137,7 +137,7 @@
                 <article class="group overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-500 hover:-translate-y-1 hover:shadow-xl reveal"
                          style="transition-delay: {{ min($index * 100, 400) }}ms">
                     <div class="relative h-40 overflow-hidden">
-                        <img src="{{ $blog->image ? (\Illuminate\Support\Str::startsWith($blog->image, ['http://', 'https://']) ? $blog->image : asset('storage/' . $blog->image)) : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80' }}"
+                        <img src="{{ $media_url($blog->image) }}"
                              alt="{{ $blog->title }}"
                              class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
 

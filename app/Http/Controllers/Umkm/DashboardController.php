@@ -107,38 +107,26 @@ class DashboardController extends Controller
             'foto_qris' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
         ]);
 
+        $cloudinary = app(\App\Services\CloudinaryService::class);
+
         // ===============================
         // UPLOAD LOGO
         // ===============================
         if ($request->hasFile('logo')) {
-
-            // hapus logo lama
-            if ($umkm->logo_url) {
-                Storage::disk('public')->delete($umkm->logo_url);
+            $logoUrl = $cloudinary->upload($request->file('logo'), 'umkm/logo');
+            if ($logoUrl) {
+                $umkm->logo_url = $logoUrl;
             }
-
-            // simpan logo baru
-            $path = $request->file('logo')
-                ->store('umkm/logo', 'public');
-
-            $umkm->logo_url = $path;
         }
 
         // ===============================
         // UPLOAD QRIS
         // ===============================
         if ($request->hasFile('foto_qris')) {
-
-            // hapus foto_qris lama
-            if ($umkm->foto_qris) {
-                Storage::disk('public')->delete($umkm->foto_qris);
+            $qrisUrl = $cloudinary->upload($request->file('foto_qris'), 'umkm/qris');
+            if ($qrisUrl) {
+                $umkm->foto_qris = $qrisUrl;
             }
-
-            // simpan foto_qris baru
-            $path = $request->file('foto_qris')
-                ->store('umkm/qris', 'public');
-
-            $umkm->foto_qris = $path;
         }
 
         // ===============================

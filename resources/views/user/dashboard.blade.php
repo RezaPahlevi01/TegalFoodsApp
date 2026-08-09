@@ -48,7 +48,7 @@
                 @if($umkm->logo_url)
 
                     <img
-                        src="{{ asset('storage/'.$umkm->logo_url) }}"
+                        src="{{ $media_url($umkm->logo_url) }}"
                         class="w-full h-44 object-cover">
 
                 @endif
@@ -87,7 +87,7 @@
             <div class="bg-white rounded-2xl shadow overflow-hidden">
 
                 <img
-                    src="{{ asset('storage/'.$makanan->gambar_url) }}"
+                    src="{{ $media_url($makanan->gambar_url) }}"
                     class="w-full h-32 md:h-48 object-cover">
 
                 <div class="p-3 md:p-4">
@@ -191,7 +191,7 @@
             <div class="bg-white rounded-2xl shadow overflow-hidden hover:shadow-xl transition">
 
                 <img
-                    src="{{ asset('storage/'.$blog->image) }}"
+                    src="{{ $media_url($blog->image) }}"
                     class="w-full h-48 md:h-56 object-cover">
 
                 <div class="p-4">

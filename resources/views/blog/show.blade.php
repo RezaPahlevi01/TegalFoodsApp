@@ -24,7 +24,7 @@
             {{ $blog->title }}
         </h1>
 
-        <img src="{{ $blog->image ? (\Illuminate\Support\Str::startsWith($blog->image, ['http://', 'https://']) ? $blog->image : asset('storage/' . $blog->image)) : 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1200&q=80' }}"
+        <img src="{{ $media_url($blog->image) }}"
              alt="{{ $blog->title }}"
              class="w-full h-96 object-cover rounded-2xl mb-10">
 

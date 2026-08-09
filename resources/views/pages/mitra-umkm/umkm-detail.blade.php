@@ -46,7 +46,7 @@
         <div class="bg-white p-6 md:p-8 rounded-lg shadow-lg flex flex-col md:flex-row justify-between items-center gap-8">
             
             <div class="flex flex-col md:flex-row items-center gap-8 flex-1 w-full md:w-auto">
-                <img src="{{ asset('storage/' . $umkm->logo_url) }}" alt="{{ $umkm->nama_umkm }}" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-md flex-shrink-0">
+                <img src="{{ $media_url($umkm->logo_url) }}" alt="{{ $umkm->nama_umkm }}" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-md flex-shrink-0">
                 
                 <div class="text-center md:text-left">
                     <h1 class="text-4xl font-bold text-brand-primary">{{ $umkm->nama_umkm }}</h1>
@@ -102,7 +102,7 @@
 
             @foreach ($umkm->makanans as $makanan)
             <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full" x-data="{ open: false }">
-                <img src="{{ asset('storage/' . $makanan->gambar_url) }}" alt="{{ $makanan->nama_makanan }}" class="w-full h-56 object-cover">
+                <img src="{{ $media_url($makanan->gambar_url) }}" alt="{{ $makanan->nama_makanan }}" class="w-full h-56 object-cover">
 
                 <div class="p-6 flex flex-col flex-grow">
                     <div class="flex-grow">

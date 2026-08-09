@@ -20,7 +20,7 @@
                    class="w-full border p-3 rounded">
 
             @if ($foodblog->image)
-                <img src="{{ asset('storage/' . $foodblog->image) }}"
+                <img src="{{ $media_url($foodblog->image) }}"
                      alt="Gambar Artikel"
                      class="mt-4 w-32 h-32 object-cover rounded">
             @endif

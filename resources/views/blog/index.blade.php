@@ -54,7 +54,7 @@
                 <div class="bg-white rounded-2xl shadow-md
                             hover:shadow-xl transition overflow-hidden">
 
-                    <img src="{{ asset('storage/' . $blog->image) }}"
+                    <img src="{{ $media_url($blog->image) }}"
                          alt="{{ $blog->title }}"
                          class="w-full h-56 object-cover">
 

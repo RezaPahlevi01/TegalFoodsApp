@@ -2,7 +2,7 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         @foreach ($mitra as $umkm)
             <div class="bg-white rounded-xl shadow-md hover:shadow-xl transition overflow-hidden">
-                <img src="{{ asset('storage/'.$umkm->logo_url) }}"
+                <img src="{{ $media_url($umkm->logo_url) }}"
                      class="w-full h-48 object-cover">
 
                 <div class="p-6">

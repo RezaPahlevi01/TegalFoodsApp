@@ -53,7 +53,7 @@
             <input type="file" name="gambar_url">
 
             @if($product->gambar_url)
-                <img src="{{ asset('storage/'.$product->gambar_url) }}"
+                <img src="{{ $media_url($product->gambar_url) }}"
                      class="w-24 mt-2 rounded">
             @endif
         </div>
