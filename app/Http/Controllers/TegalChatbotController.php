@@ -100,8 +100,8 @@ class TegalChatbotController extends Controller
                     'alamat' => $umkm->alamat,
                     'deskripsi' => $umkm->deskripsi,
                     'nomor_whatsapp' => $umkm->nomor_whatsapp,
-                    'jam_buka' => $umkm->jam_buka ? $umkm->jam_buka->format('H:i') : null,
-                    'jam_tutup' => $umkm->jam_tutup ? $umkm->jam_tutup->format('H:i') : null,
+                    'jam_buka' => $umkm->getRawOriginal('jam_buka'),
+                    'jam_tutup' => $umkm->getRawOriginal('jam_tutup'),
                     'is_open' => $umkm->isOpenNow(),
                     'products' => $umkm->makanans->map(function (Makanan $makanan) use ($umkm) {
                         return [
