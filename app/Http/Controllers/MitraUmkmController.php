@@ -20,7 +20,7 @@ class MitraUmkmController extends Controller
 
     public function search(Request $request)
     {
-        $q = $request->input('search') ?: $request->input('q');
+        $q = $request->q;
 
         $mitra = Umkm::with(['makanans' => fn ($query) => $query->available()])
             ->whereHas('user', fn ($q) => $q->where('status', 'active'))
@@ -28,6 +28,6 @@ class MitraUmkmController extends Controller
             $query->where('nama_umkm', 'like', "%{$q}%");
         })->latest()->get();
 
-        return view('pages.mitra-umkm.index', compact('mitra'));
+        return view('partials.list', compact('mitra'));
     }
 }

@@ -57,7 +57,6 @@
             <input
                 type="text"
                 id="search"
-                value="{{ request('search') ?: request('q') }}"
                 placeholder="Cari nama UMKM..."
                 class="w-full max-w-md
                        px-5 py-3 rounded-xl border border-gray-300
