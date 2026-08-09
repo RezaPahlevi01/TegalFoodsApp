@@ -34,7 +34,7 @@ class Makanan extends Model
 
     public function scopeAvailable($query)
     {
-        return $query->where('is_available', true);
+        return $query->whereRaw('is_available = true');
     }
 
     public function carts()

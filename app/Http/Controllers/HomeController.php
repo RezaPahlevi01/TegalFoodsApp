@@ -38,7 +38,7 @@ public function dashboard()
     ->get();
 
     $makanans = Makanan::with('umkm')
-        ->where('is_available', true)
+        ->whereRaw('is_available = true')
         ->latest()
         ->take(8)
         ->get();
