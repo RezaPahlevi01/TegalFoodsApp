@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Log;
 
 class CloudinaryService
 {
-    private string $cloudName;
-    private string $uploadPreset;
+    private ?string $cloudName;
+    private ?string $uploadPreset;
 
     public function __construct()
     {
@@ -19,7 +19,7 @@ class CloudinaryService
 
     public function upload(UploadedFile $file, string $folder = 'qris'): ?string
     {
-        if (!$this->cloudName || !$this->uploadPreset) {
+        if (empty($this->cloudName) || empty($this->uploadPreset)) {
             Log::warning('Cloudinary not configured.');
             return null;
         }
