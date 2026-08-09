@@ -138,7 +138,7 @@
                             <span>Ongkir</span>
 
                             <span id="ongkirText">
-                                Rp 10.000
+                                Rp {{ number_format($ongkir,0,',','.') }}
                             </span>
                         </div>
 
@@ -149,7 +149,7 @@
                             <span>Total</span>
 
                             <span id="totalText">
-                                Rp {{ number_format($total + 10000,0,',','.') }}
+                                Rp {{ number_format($total + $ongkir,0,',','.') }}
                             </span>
 
                         </div>
@@ -186,12 +186,12 @@
 <script>
 
 const subtotal = {{ $total }};
+const baseOngkir = {{ $ongkir }};
 
 const radios = document.querySelectorAll('input[name="metode_pengiriman"]');
 
 const ongkirText = document.getElementById('ongkirText');
 const totalText = document.getElementById('totalText');
-const ongkirInput = document.getElementById('ongkirInput');
 
 function formatRupiah(nominal)
 {
@@ -204,13 +204,11 @@ function updateTotal()
 
     if(document.querySelector('input[name="metode_pengiriman"]:checked').value === 'delivery')
     {
-        ongkir = 10000;
+        ongkir = baseOngkir;
     }
 
     ongkirText.innerHTML = formatRupiah(ongkir);
     totalText.innerHTML = formatRupiah(subtotal + ongkir);
-
-    ongkirInput.value = ongkir;
 }
 
 radios.forEach(radio => {

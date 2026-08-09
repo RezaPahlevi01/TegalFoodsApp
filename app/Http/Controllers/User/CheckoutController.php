@@ -34,12 +34,36 @@ class CheckoutController extends Controller
                 ->with('error', 'Anda belum mengatur lokasi. Silakan lengkapi profil lokasi terlebih dahulu.');
         }
 
+        $umkm = $carts->first()->makanan->umkm;
+
+        if ($umkm->latitude && $umkm->longitude) {
+            $distance = DistanceService::haversine(
+                $profile->latitude,
+                $profile->longitude,
+                $umkm->latitude,
+                $umkm->longitude
+            );
+
+            if ($distance <= 2) {
+                $ongkir = 5000;
+            } elseif ($distance <= 5) {
+                $ongkir = 10000;
+            } elseif ($distance <= 10) {
+                $ongkir = 15000;
+            } else {
+                $ongkir = 20000;
+            }
+        } else {
+            $ongkir = 10000;
+        }
+
         return view(
             'user.checkout',
             compact(
                 'carts',
                 'total',
-                'profile'
+                'profile',
+                'ongkir'
             )
         );
     }
