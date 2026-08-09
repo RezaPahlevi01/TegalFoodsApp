@@ -7,24 +7,30 @@ use App\Models\OrderItem;
 
 class ReportService
 {
-    /*
-    |--------------------------------------------------------------------------
-    | REPORT PRODUK PER UMKM
-    |--------------------------------------------------------------------------
-    */
+    private function applyFilter($query, $tipe, $tanggal, $bulan, $tahun)
+    {
+        if ($tipe === 'hari') {
+            $query->whereDate('created_at', $tanggal);
+        } elseif ($tipe === 'tahun') {
+            $query->whereYear('created_at', $tahun);
+        } else {
+            $query->whereMonth('created_at', $bulan)
+                  ->whereYear('created_at', $tahun);
+        }
+        return $query;
+    }
 
-    public function monthlyReport($umkmId, $bulan, $tahun)
+    public function monthlyReport($umkmId, $bulan, $tahun, $tipe = 'bulan', $tanggal = null)
     {
         return OrderItem::select(
                 'makanan_id',
                 \DB::raw('SUM(qty) as total_terjual'),
                 \DB::raw('SUM(subtotal) as total_pendapatan')
             )
-            ->whereHas('order', function ($q) use ($umkmId, $bulan, $tahun) {
+            ->whereHas('order', function ($q) use ($umkmId, $bulan, $tahun, $tipe, $tanggal) {
                 $q->where('umkm_id', $umkmId)
-                  ->where('status', 'selesai')
-                  ->whereMonth('created_at', $bulan)
-                  ->whereYear('created_at', $tahun);
+                  ->where('status', 'selesai');
+                $this->applyFilter($q, $tipe, $tanggal, $bulan, $tahun);
             })
             ->with('makanan')
             ->groupBy('makanan_id')
@@ -32,57 +38,30 @@ class ReportService
             ->get();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL OMZET (FIX: pakai orders.subtotal)
-    |--------------------------------------------------------------------------
-    */
-
-    public function totalIncome($umkmId, $bulan, $tahun)
+    public function totalIncome($umkmId, $bulan, $tahun, $tipe = 'bulan', $tanggal = null)
     {
-        return Order::where('umkm_id', $umkmId)
-            ->where('status', 'selesai')
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->sum('subtotal'); // ✅ FIX: pakai subtotal order
+        $query = Order::where('umkm_id', $umkmId)
+            ->where('status', 'selesai');
+        $this->applyFilter($query, $tipe, $tanggal, $bulan, $tahun);
+        return $query->sum('subtotal');
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL ORDER
-    |--------------------------------------------------------------------------
-    */
-
-    public function totalOrders($umkmId, $bulan, $tahun)
+    public function totalOrders($umkmId, $bulan, $tahun, $tipe = 'bulan', $tanggal = null)
     {
-        return Order::where('umkm_id', $umkmId)
-            ->where('status', 'selesai')
-            ->whereMonth('created_at', $bulan)
-            ->whereYear('created_at', $tahun)
-            ->count();
+        $query = Order::where('umkm_id', $umkmId)
+            ->where('status', 'selesai');
+        $this->applyFilter($query, $tipe, $tanggal, $bulan, $tahun);
+        return $query->count();
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | TOTAL PRODUK TERJUAL
-    |--------------------------------------------------------------------------
-    */
-
-    public function totalProducts($umkmId, $bulan, $tahun)
+    public function totalProducts($umkmId, $bulan, $tahun, $tipe = 'bulan', $tanggal = null)
     {
-        return OrderItem::whereHas('order', function ($q) use ($umkmId, $bulan, $tahun) {
+        return OrderItem::whereHas('order', function ($q) use ($umkmId, $bulan, $tahun, $tipe, $tanggal) {
             $q->where('umkm_id', $umkmId)
-              ->where('status', 'selesai')
-              ->whereMonth('created_at', $bulan)
-              ->whereYear('created_at', $tahun);
+              ->where('status', 'selesai');
+            $this->applyFilter($q, $tipe, $tanggal, $bulan, $tahun);
         })->sum('qty');
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | BEST SELLER
-    |--------------------------------------------------------------------------
-    */
 
     public function bestSeller($report)
     {

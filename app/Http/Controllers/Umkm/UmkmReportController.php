@@ -78,6 +78,8 @@ class UmkmReportController extends Controller
 
  public function exportPdf(Request $request)
     {
+        $tipe = $request->tipe ?? 'bulan';
+        $tanggal = $request->tanggal ?? now()->format('Y-m-d');
         $bulan = $request->bulan ?? now()->month;
         $tahun = $request->tahun ?? now()->year;
 
@@ -88,22 +90,28 @@ class UmkmReportController extends Controller
         $report = $this->reportService->monthlyReport(
             $umkm->id,
             $bulan,
-            $tahun
+            $tahun,
+            $tipe,
+            $tanggal
         );
 
         $totalIncome = $this->reportService->totalIncome(
             $umkm->id,
             $bulan,
-            $tahun
+            $tahun,
+            $tipe,
+            $tanggal
         );
 
         $totalOrders = $this->reportService->totalOrders(
             $umkm->id,
             $bulan,
-            $tahun
+            $tahun,
+            $tipe,
+            $tanggal
         );
 
-        $totalProducts = $this->reportService->totalProducts($umkm->id, $bulan, $tahun);
+        $totalProducts = $this->reportService->totalProducts($umkm->id, $bulan, $tahun, $tipe, $tanggal);
 
         $bestSeller = $this->reportService->bestSeller($report);
 
@@ -113,6 +121,8 @@ class UmkmReportController extends Controller
                 'report',
                 'bulan',
                 'tahun',
+                'tipe',
+                'tanggal',
                 'totalIncome',
                 'totalOrders',
                 'totalProducts',
@@ -122,7 +132,7 @@ class UmkmReportController extends Controller
         );
 
         return $pdf->download(
-            "laporan-$bulan-$tahun.pdf"
+            "laporan-$umkm->nama_umkm-$tipe-$bulan-$tahun.pdf"
         );
     }
 
