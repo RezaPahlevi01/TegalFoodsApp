@@ -19,7 +19,7 @@
 
     </section>
 
-    {{-- SEARCH --}}
+    <!-- {{-- SEARCH --}}
     <section class="container mx-auto px-4 md:px-6 py-6">
 
         <form action="{{ route('mitra.umkm.search') }}">
@@ -30,7 +30,7 @@
                 class="w-full rounded-xl border border-gray-200 p-3 md:p-4 shadow-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none">
         </form>
 
-    </section>
+    </section> -->
 
     {{-- UMKM --}}
     <section class="container mx-auto px-6 py-10">
