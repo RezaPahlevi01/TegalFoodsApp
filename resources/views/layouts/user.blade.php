@@ -313,8 +313,42 @@
         @endif
 
         @if(session('error'))
+            <div id="errorModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50" style="display:none;" data-message="{{ session('error') }}">
+                <div class="bg-white rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center transform transition-all" id="errorModalContent">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-gray-800 mb-2">Perhatian</h3>
+                    <p class="text-gray-600 mb-6" id="errorMessage"></p>
+                    <button onclick="closeErrorModal()" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 px-8 rounded-xl transition-colors duration-200">
+                        Mengerti
+                    </button>
+                </div>
+            </div>
             <script>
-                alert('{{ session('error') }}');
+                document.addEventListener('DOMContentLoaded', function() {
+                    var modal = document.getElementById('errorModal');
+                    var content = document.getElementById('errorModalContent');
+                    var msg = modal.getAttribute('data-message');
+                    document.getElementById('errorMessage').textContent = msg;
+                    modal.style.display = 'flex';
+                    content.style.transform = 'scale(0.8)';
+                    content.style.opacity = '0';
+                    setTimeout(function() {
+                        content.style.transform = 'scale(1)';
+                        content.style.opacity = '1';
+                        content.style.transition = 'all 0.25s ease-out';
+                    }, 10);
+                });
+                function closeErrorModal() {
+                    var modal = document.getElementById('errorModal');
+                    var content = document.getElementById('errorModalContent');
+                    content.style.transform = 'scale(0.8)';
+                    content.style.opacity = '0';
+                    setTimeout(function() { modal.style.display = 'none'; }, 200);
+                }
             </script>
         @endif
 
