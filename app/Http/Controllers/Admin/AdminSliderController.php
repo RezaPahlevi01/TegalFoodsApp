@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Slider;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class AdminSliderController extends Controller
 {
@@ -27,11 +27,15 @@ class AdminSliderController extends Controller
             'judul' => 'nullable|string|max:255',
         ]);
 
-        $path = $request->file('gambar')->store('sliders', 'public');
+        $url = null;
+        if ($request->hasFile('gambar')) {
+            $cloudinary = app(CloudinaryService::class);
+            $url = $cloudinary->upload($request->file('gambar'), 'sliders');
+        }
 
         Slider::create([
             'judul' => $request->judul,
-            'gambar' => $path,
+            'gambar' => $url,
         ]);
 
         return redirect()
@@ -41,7 +45,6 @@ class AdminSliderController extends Controller
 
     public function destroy(Slider $slider)
     {
-        Storage::disk('public')->delete($slider->gambar);
         $slider->delete();
 
         return back()->with('success', 'Slider dihapus');

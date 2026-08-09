@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\FoodBlog;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class AdminFoodBlogController extends Controller
 {
@@ -32,7 +32,8 @@ class AdminFoodBlogController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('food-blog', 'public');
+            $cloudinary = app(CloudinaryService::class);
+            $imagePath = $cloudinary->upload($request->file('image'), 'food-blog');
         }
 
         FoodBlog::create([
@@ -64,14 +65,8 @@ class AdminFoodBlogController extends Controller
         $imagePath = $foodblog->image;
 
         if ($request->hasFile('image')) {
-
-            // Hapus gambar lama
-            if ($foodblog->image && Storage::disk('public')->exists($foodblog->image)) {
-                Storage::disk('public')->delete($foodblog->image);
-            }
-
-            // Simpan gambar baru
-            $imagePath = $request->file('image')->store('food-blog', 'public');
+            $cloudinary = app(CloudinaryService::class);
+            $imagePath = $cloudinary->upload($request->file('image'), 'food-blog');
         }
 
         $foodblog->update([

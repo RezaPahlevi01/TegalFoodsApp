@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Umkm;
 
 use App\Http\Controllers\Controller;
 use App\Models\Makanan;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -71,9 +72,8 @@ class ProductController extends Controller
         $gambar = null;
 
         if ($request->hasFile('gambar_url')) {
-
-            $gambar = $request->file('gambar_url')
-                        ->store('products', 'public');
+            $cloudinary = app(CloudinaryService::class);
+            $gambar = $cloudinary->upload($request->file('gambar_url'), 'products');
         }
 
         Makanan::create([
@@ -134,8 +134,8 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('gambar_url')) {
-            $product->gambar_url = $request->file('gambar_url')
-                ->store('products', 'public');
+            $cloudinary = app(CloudinaryService::class);
+            $product->gambar_url = $cloudinary->upload($request->file('gambar_url'), 'products');
         }
 
         $product->nama_makanan = $request->nama_makanan;

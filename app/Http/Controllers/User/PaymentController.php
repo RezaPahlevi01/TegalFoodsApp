@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Http\Controllers\Controller;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -38,14 +39,15 @@ class PaymentController extends Controller
             'required|image|max:2048'
         ]);
 
+        $url = null;
+        if ($request->hasFile('bukti_bayar')) {
+            $cloudinary = app(CloudinaryService::class);
+            $url = $cloudinary->upload($request->file('bukti_bayar'), 'payments');
+        }
+
         Payment::create([
             'order_id' => $order->id,
-            'bukti_bayar' =>
-            $request->file('bukti_bayar')
-                ->store(
-                    'payments',
-                    'public'
-                ),
+            'bukti_bayar' => $url,
             'status' => 'menunggu'
         ]);
 
