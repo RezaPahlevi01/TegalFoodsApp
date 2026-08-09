@@ -227,9 +227,6 @@ Route::prefix('admin')
         );
         Route::get('/reports', [AdminReportController::class, 'index'])
             ->name('report.index');
-
-        Route::get('/warteg/cleanup-images', \App\Http\Controllers\Admin\AdminWartegImageCleanupController::class)
-            ->name('warteg.cleanup-images');
     });
 
 
