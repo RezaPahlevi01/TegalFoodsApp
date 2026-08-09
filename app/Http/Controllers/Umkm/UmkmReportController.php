@@ -103,7 +103,7 @@ class UmkmReportController extends Controller
             $tahun
         );
 
-        $totalProducts = $this->reportService->totalProducts($report);
+        $totalProducts = $this->reportService->totalProducts($umkm->id, $bulan, $tahun);
 
         $bestSeller = $this->reportService->bestSeller($report);
 
