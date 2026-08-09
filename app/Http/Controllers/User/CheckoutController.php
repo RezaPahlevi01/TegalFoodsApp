@@ -62,6 +62,10 @@ class CheckoutController extends Controller
     // ambil profile user
     $user = Auth::user();
     $profile = Auth::user()->profile;
+
+    if (!$profile->latitude || !$profile->longitude) {
+        return back()->with('error', 'Lengkapi profil lokasi Anda terlebih dahulu di halaman profil.');
+    }
 // Ambil UMKM dari produk pertama di keranjang
 $umkm = $carts->first()->makanan->umkm;
 
