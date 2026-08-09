@@ -53,16 +53,16 @@ class TegalChatbotController extends Controller
     public function context()
     {
         try {
-            return response()->json($this->buildContext());
+            $data = $this->buildContext();
+            return response()->json($data);
         } catch (Throwable $e) {
-            Log::error('Chatbot context error: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-            ]);
             return response()->json([
+                'error' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'stores' => [],
                 'products' => [],
                 'open_stores' => [],
-                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -115,7 +115,7 @@ class TegalChatbotController extends Controller
                     'nomor_whatsapp' => $umkm->nomor_whatsapp,
                     'jam_buka' => $umkm->getRawOriginal('jam_buka'),
                     'jam_tutup' => $umkm->getRawOriginal('jam_tutup'),
-                    'is_open' => (bool) $umkm->isOpenNow(),
+                    'is_open' => $umkm->isOpenNow(),
                     'products' => $umkm->makanans->map(function (Makanan $makanan) use ($umkm) {
                         return [
                             'id' => $makanan->id,
