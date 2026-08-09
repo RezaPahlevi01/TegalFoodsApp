@@ -9,7 +9,13 @@
     <div class="mb-4">
         <p><b>Kode Order:</b> {{ $order->kode_order }}</p>
         <p><b>Customer:</b> {{ $order->user->name }}</p>
+        <p><b>Nama Penerima:</b> {{ $order->nama_penerima }}</p>
+        <p><b>No. Telepon:</b> {{ $order->nomor_telepon }}</p>
+        <p><b>Alamat Pengiriman:</b> {{ $order->alamat_pengiriman }}</p>
+        <p><b>Metode Pengiriman:</b> {{ $order->metode_pengiriman === 'delivery' ? 'Delivery' : 'Pick Up' }}</p>
         <p><b>Status:</b> {{ ucfirst($order->status) }}</p>
+        <p><b>Subtotal:</b> Rp {{ number_format($order->subtotal) }}</p>
+        <p><b>Ongkir:</b> Rp {{ number_format($order->ongkir) }}</p>
         <p><b>Total:</b> Rp {{ number_format($order->total) }}</p>
     </div>
 
