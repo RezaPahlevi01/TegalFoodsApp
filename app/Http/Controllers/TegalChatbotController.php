@@ -89,6 +89,7 @@ class TegalChatbotController extends Controller
     private function buildContext(): array
     {
         $stores = Umkm::with(['makanans' => fn ($query) => $query->available()->orderBy('harga')])
+            ->whereHas('user', fn ($q) => $q->where('status', 'active'))
             ->latest()
             ->get()
             ->map(function (Umkm $umkm) {

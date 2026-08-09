@@ -12,7 +12,9 @@ class MitraUmkmController extends Controller
     {
         $analytics->trackWebVisit($request, 'mitra-umkm');
 
-        $mitra = Umkm::with(['makanans' => fn ($query) => $query->available()])->latest()->get();
+        $mitra = Umkm::with(['makanans' => fn ($query) => $query->available()])
+            ->whereHas('user', fn ($q) => $q->where('status', 'active'))
+            ->latest()->get();
         return view('pages.mitra-umkm.index', compact('mitra'));
     }
 
@@ -21,6 +23,7 @@ class MitraUmkmController extends Controller
         $q = $request->q;
 
         $mitra = Umkm::with(['makanans' => fn ($query) => $query->available()])
+            ->whereHas('user', fn ($q) => $q->where('status', 'active'))
             ->when($q, function ($query) use ($q) {
             $query->where('nama_umkm', 'like', "%{$q}%");
         })->latest()->get();

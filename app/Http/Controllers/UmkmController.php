@@ -9,7 +9,9 @@ class UmkmController extends Controller
 {
     public function index()
     {
-        $dataUmkm = Umkm::with('makanans')->get();
+        $dataUmkm = Umkm::with('makanans')
+            ->whereHas('user', fn ($q) => $q->where('status', 'active'))
+            ->get();
 
         $allFood = $dataUmkm->flatMap(function ($umkm) {
             return $umkm->makanans;
@@ -26,7 +28,9 @@ class UmkmController extends Controller
         // Cari UMKM berdasarkan ID, 
         // ambil juga relasi makanannya (eager loading)
         // 'findOrFail' akan otomatis error 404 jika ID tidak ditemukan
-        $umkm = Umkm::with(['makanans' => fn ($query) => $query->available()])->findOrFail($id);
+        $umkm = Umkm::with(['makanans' => fn ($query) => $query->available()])
+            ->whereHas('user', fn ($q) => $q->where('status', 'active'))
+            ->findOrFail($id);
 
         $analytics->trackWebVisit($request, 'umkm:' . $umkm->id);
         $analytics->trackUmkmView($umkm, $request);
