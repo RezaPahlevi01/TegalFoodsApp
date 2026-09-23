@@ -143,21 +143,14 @@
 
                             @if(Auth::user()->role == 'user')
 
-                                <form action="{{ route('cart.add',$makanan->id) }}"
-                                    method="POST"
-                                    class="w-full">
-
-                                    @csrf
-
-                                    <button
-                                        type="submit"
-                                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-xl transition">
+                                <button
+                                    type="button"
+                                    onclick="addToCart({{ $makanan->id }}, this)"
+                                    class="w-full bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-xl transition">
 
                                         + Keranjang
 
-                                    </button>
-
-                                </form>
+                                </button>
 
                             @else
 
@@ -192,6 +185,8 @@
         </div>
     </footer>
 
+    @include('partials.floating-cart')
+
     <script>
         const trackedMenus = new Set();
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
@@ -215,6 +210,49 @@
                 trackedMenus.delete(menuId);
             });
         };
+    </script>
+
+    <script>
+    async function addToCart(makananId, btn) {
+        const originalText = btn.textContent;
+        btn.textContent = '...';
+        btn.disabled = true;
+
+        try {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+            const res = await fetch('/cart/api/add/' + makananId, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.dispatchEvent(new CustomEvent('cart-added'));
+                btn.textContent = '✓ Ditambahkan';
+                btn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+                btn.classList.add('bg-green-500');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+                    btn.classList.remove('bg-green-500');
+                    btn.disabled = false;
+                }, 1500);
+            } else if (res.status === 401) {
+                window.location.href = '/login-user';
+            } else {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                alert(data.error || 'Gagal menambahkan ke keranjang');
+            }
+        } catch (e) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+            alert('Terjadi kesalahan. Silakan coba lagi.');
+        }
+    }
     </script>
 </body>
 </html>

@@ -12,6 +12,16 @@ class PaymentController extends Controller
 {
     public function show(Order $order)
     {
+        if ((string) $order->user_id !== (string) auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'waiting_payment') {
+            return redirect()
+                ->route('orders.show', $order->id)
+                ->with('error', 'Pesanan belum dapat dibayar.');
+        }
+
         $order->load('items.makanan');
 
         $umkm = $order
@@ -33,6 +43,15 @@ class PaymentController extends Controller
         Request $request,
         Order $order
     ) {
+        if ((string) $order->user_id !== (string) auth()->id()) {
+            abort(403);
+        }
+
+        if ($order->status !== 'waiting_payment') {
+            return redirect()
+                ->route('orders.show', $order->id)
+                ->with('error', 'Pesanan belum dapat dibayar.');
+        }
 
         $request->validate([
             'bukti_bayar' =>
@@ -45,21 +64,24 @@ class PaymentController extends Controller
             $url = $cloudinary->upload($request->file('bukti_bayar'), 'payments');
         }
 
-        Payment::create([
-            'order_id' => $order->id,
-            'bukti_bayar' => $url,
-            'status' => 'menunggu'
-        ]);
+        if (!$url) {
+            return back()->with('error', 'Gagal mengunggah bukti pembayaran. Silakan coba lagi.');
+        }
 
-        $order->update([
-            'status' => 'dibayar'
-        ]);
+        Payment::updateOrCreate(
+            ['order_id' => $order->id],
+            [
+                'bukti_bayar' => $url,
+            ]
+        );
+
+        $order->transitionTo('paid');
 
         return redirect()
-            ->route('orders.index')
+            ->route('orders.show', $order->id)
             ->with(
                 'success',
-                'Bukti pembayaran berhasil dikirim'
+                'Bukti pembayaran berhasil dikirim. Pesanan akan segera diproses.'
             );
     }
 }

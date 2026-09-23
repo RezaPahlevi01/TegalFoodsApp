@@ -22,6 +22,7 @@ use App\Http\Controllers\User\UserProfileController;
 use App\Http\Controllers\Umkm\UmkmOrderController;
 use App\Http\Controllers\Umkm\UmkmReportController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminShippingController;
 
 
 
@@ -73,6 +74,10 @@ Route::middleware(['auth:umkm', 'role:umkm'])->group(function () {
     Route::get('/umkm/manage-orders/{id}', [UmkmOrderController::class, 'show'])->name('umkm.manage-orders.show');
 
     Route::post('/umkm/manage-orders/{id}/status', [UmkmOrderController::class, 'updateStatus'])->name('umkm.manage-orders.updateStatus');
+
+    Route::post('/umkm/manage-orders/{id}/confirm', [UmkmOrderController::class, 'confirm'])->name('umkm.manage-orders.confirm');
+
+    Route::post('/umkm/manage-orders/{id}/reject', [UmkmOrderController::class, 'reject'])->name('umkm.manage-orders.reject');
 
     Route::get('/umkm/dashboard',
         [DashboardController::class,'index']
@@ -143,13 +148,6 @@ Route::post('/logout-admin', [AuthController::class, 'logoutAdmin'])
 
 Route::post('/logout-umkm', [AuthController::class, 'logoutUmkm'])
     ->name('umkm.logout');
-    
-// REGISTER UMKM
-Route::get('/register-umkm', [AuthController::class, 'showRegisterUmkm'])
-    ->name('umkm.register');
-
-Route::post('/register-umkm', [AuthController::class, 'registerUmkm'])
-    ->name('umkm.register.store');
 
 // OTP
 Route::get('/verify-otp', [AuthController::class, 'otpForm'])->name('otp.form');
@@ -157,12 +155,6 @@ Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.o
 
 // RESEND OTP
 Route::get('/resend-otp', [AuthController::class, 'resendOtp'])->name('resend.otp');
-
-// GOOGLE LOGIN UMKM
-Route::get('/auth/umkm/google', [AuthController::class, 'redirectToGoogle'])
-    ->name('umkm.google.redirect');
-Route::get('/auth/umkm/google/callback', [AuthController::class, 'handleGoogleCallback'])
-    ->name('umkm.google.callback');
 
 
 
@@ -202,6 +194,7 @@ Route::prefix('admin')
         Route::get('/umkm', [AdminUmkmController::class, 'index'])->name('umkm.index');
         Route::post('/umkm', [AdminUmkmController::class, 'store'])->name('umkm.store');
         Route::get('/umkm/create', [AdminUmkmController::class, 'create'])->name('umkm.create');
+        Route::get('/umkm/{umkm}', [AdminUmkmController::class, 'show'])->name('umkm.show');
         Route::put('/umkm/{umkm}', [AdminUmkmController::class, 'update'])->name('umkm.update');
         Route::get('/umkm/{umkm}/edit', [AdminUmkmController::class, 'edit'])->name('umkm.edit');
         Route::delete('/umkm/{umkm}', [AdminUmkmController::class, 'destroy'])->name('umkm.destroy');
@@ -227,6 +220,14 @@ Route::prefix('admin')
         );
         Route::get('/reports', [AdminReportController::class, 'index'])
             ->name('report.index');
+
+        Route::post('/reports/export', [AdminReportController::class, 'export'])
+            ->name('report.export');
+
+        // SHIPPING SETTINGS
+        Route::get('/shipping', [AdminShippingController::class, 'index'])->name('shipping.index');
+        Route::put('/shipping', [AdminShippingController::class, 'update'])->name('shipping.update');
+        Route::post('/shipping/preview', [AdminShippingController::class, 'preview'])->name('shipping.preview');
     });
 
 
@@ -246,6 +247,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{cart}',
         [CartController::class, 'destroy'])
         ->name('cart.delete');
+
+    Route::get('/cart/api/data',
+        [CartController::class, 'apiData'])
+        ->name('cart.api.data');
+
+    Route::post('/cart/api/add/{makanan}',
+        [CartController::class, 'apiAdd'])
+        ->name('cart.api.add');
+
+    Route::delete('/cart/api/remove/{cart}',
+        [CartController::class, 'apiRemove'])
+        ->name('cart.api.remove');
     Route::get('/checkout',
         [CheckoutController::class, 'index'])
         ->name('checkout.index');

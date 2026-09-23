@@ -46,4 +46,8 @@ return [
         'upload_preset' => env('CLOUDINARY_UPLOAD_PRESET'),
     ],
 
+    'openrouteservice' => [
+        'key' => env('OPENROUTESERVICE_API_KEY'),
+    ],
+
 ];

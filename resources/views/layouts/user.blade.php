@@ -11,6 +11,8 @@
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet/dist/leaflet.css">
 
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     {{-- Tempat untuk css tambahan --}}
     @stack('styles')
 
@@ -210,13 +212,6 @@
 
         </a>
 
-        <a href="{{ route('cart.index') }}"
-           class="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-100 mb-2">
-
-            🛒 Keranjang
-
-        </a>
-
         <a href="{{ route('orders.index') }}"
            class="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-100 mb-2">
 
@@ -362,7 +357,7 @@
 <div
     class="fixed bottom-0 left-0 right-0 bg-white border-t lg:hidden z-30">
 
-    <div class="grid grid-cols-5">
+    <div class="grid grid-cols-4">
 
         <a href="{{ route('dashboard') }}"
            class="py-3 text-center text-sm">
@@ -374,12 +369,6 @@
            class="py-3 text-center text-sm">
 
             🏪
-        </a>
-
-        <a href="{{ route('cart.index') }}"
-           class="py-3 text-center text-sm">
-
-            🛒
         </a>
 
         <a href="{{ route('orders.index') }}"
@@ -474,6 +463,8 @@ profileModal.addEventListener("click",(e)=>{
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 @stack('scripts')
+
+@include('partials.floating-cart')
 
 <script>
     const map = L.map('map').setView([-6.869, 109.140], 13);

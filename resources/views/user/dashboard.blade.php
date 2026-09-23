@@ -104,16 +104,14 @@
                         Rp {{ number_format($makanan->harga) }}
                     </p>
 
-                    <form action="{{ route('cart.add',$makanan->id) }}" method="POST">
-                        @csrf
-
-                        <button
-                            class="w-full mt-3 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg text-sm">
+                    <button
+                        type="button"
+                        onclick="addToCart({{ $makanan->id }}, this)"
+                        class="w-full mt-3 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-lg text-sm">
 
                             Tambah
 
-                        </button>
-                    </form>
+                    </button>
 
                 </div>
 
@@ -218,6 +216,46 @@
 
     </section>
 
-</div>
+    </div>
 
 @endsection
+
+<script>
+async function addToCart(makananId, btn) {
+    const originalText = btn.textContent;
+    btn.textContent = '...';
+    btn.disabled = true;
+
+    try {
+        const res = await fetch('/cart/api/add/' + makananId, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}',
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        const data = await res.json();
+        if (data.success) {
+            window.dispatchEvent(new CustomEvent('cart-added'));
+            btn.textContent = '✓ Ditambahkan';
+            btn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+            btn.classList.add('bg-green-500');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+                btn.classList.remove('bg-green-500');
+                btn.disabled = false;
+            }, 1500);
+        } else {
+            btn.textContent = originalText;
+            btn.disabled = false;
+            alert(data.error || 'Gagal menambahkan ke keranjang');
+        }
+    } catch (e) {
+        btn.textContent = originalText;
+        btn.disabled = false;
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+    }
+}
+</script>

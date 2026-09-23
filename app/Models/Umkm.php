@@ -17,6 +17,8 @@ class Umkm extends Model
 
     protected $fillable = [
         'user_id',
+        'nib',
+        'dokumen_nib',
         'nama_umkm',
         'nama_pemilik',
         'deskripsi',

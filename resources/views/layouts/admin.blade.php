@@ -82,6 +82,14 @@
 
             </a>
 
+            <a href="{{ route('admin.shipping.index') }}"
+               class="flex items-center gap-3 px-4 py-3 rounded-xl transition
+               {{ request()->routeIs('admin.shipping.*') ? 'bg-white text-orange-600 font-bold shadow' : 'hover:bg-white/20' }}">
+
+                🚚 Pengiriman
+
+            </a>
+
         </nav>
 
         {{-- Logout --}}

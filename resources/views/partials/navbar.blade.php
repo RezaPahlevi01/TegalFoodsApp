@@ -25,9 +25,9 @@
   <div class="hidden md:block relative">
 
       @guest
-          <a href="{{ route('umkm.register') }}"
+          <a href="{{ route('user.register') }}"
             class="relative z-50 px-4 py-2 text-white rounded-md hover:bg-yellow-400">
-              Daftar UMKM
+              Daftar
           </a>
       @else
 
@@ -80,13 +80,6 @@
 
               </div>
 
-          @else
-
-              <a href="{{ route('umkm.register') }}"
-                class="relative z-50 px-4 py-2 text-white rounded-md hover:bg-yellow-400">
-                  Daftar UMKM
-              </a>
-
           @endif
 
       @endguest
@@ -113,12 +106,6 @@
       <li><a href="{{ route('welcome') }}" class="flex items-center gap-3 hover:text-yellow-500">🏠 Beranda</a></li>
       <li><a href="/mitra-umkm" class="flex items-center gap-3 hover:text-yellow-500">🏪 UMKM</a></li>
       <li><a href="{{ route('blog.index') }}" class="flex items-center gap-3 hover:text-yellow-500">📰 Artikel</a></li>
-      <a href="{{ route('umkm.register') }}"
-        style="position:relative; z-index:9999;"
-        class="px-4 py-2 text-white bg-yellow-400 rounded-md hover:bg-yellow-500 justify-center flex">
-          Daftar UMKM
-      </a>
-      </li>
     </ul>
   </div>
 </nav>

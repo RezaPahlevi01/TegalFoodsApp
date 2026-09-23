@@ -5,7 +5,7 @@
 @section('content')
 
 <h1 class="text-3xl font-bold mb-8">
-    📦 Pesanan Saya
+    Pesanan Saya
 </h1>
 
 @if($orders->isEmpty())
@@ -13,7 +13,6 @@
 <div class="bg-white rounded-2xl shadow-lg p-12 text-center">
 
     <div class="text-6xl mb-5">
-        🛍️
     </div>
 
     <h2 class="text-2xl font-bold mb-2">
@@ -75,13 +74,13 @@
                         @if($order->metode_pengiriman == 'delivery')
 
                             <span class="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-                                🚚 Delivery
+                                Delivery
                             </span>
 
                         @else
 
                             <span class="inline-flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                                🏪 Pick Up
+                                Pick Up
                             </span>
 
                         @endif
@@ -96,39 +95,57 @@
 
                         @switch($order->status)
 
-                            @case('pending')
+                            @case('pending_confirmation')
                                 <span class="bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full">
-                                    ⏳ Pending
+                                    Menunggu Konfirmasi
                                 </span>
                             @break
 
-                            @case('dibayar')
+                            @case('waiting_payment')
                                 <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full">
-                                    💳 Dibayar
+                                    Menunggu Pembayaran
                                 </span>
                             @break
 
-                            @case('diproses')
+                            @case('paid')
                                 <span class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full">
-                                    👨‍🍳 Diproses
+                                    Dibayar
                                 </span>
                             @break
 
-                            @case('dikirim')
+                            @case('processing')
                                 <span class="bg-purple-100 text-purple-700 px-4 py-1 rounded-full">
-                                    🚚 Dikirim
+                                    Diproses
                                 </span>
                             @break
 
-                            @case('selesai')
+                            @case('ready')
+                                <span class="bg-teal-100 text-teal-700 px-4 py-1 rounded-full">
+                                    Siap
+                                </span>
+                            @break
+
+                            @case('delivering')
+                                <span class="bg-cyan-100 text-cyan-700 px-4 py-1 rounded-full">
+                                    Diantar
+                                </span>
+                            @break
+
+                            @case('completed')
                                 <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full">
-                                    ✅ Selesai
+                                    Selesai
                                 </span>
                             @break
 
-                            @case('dibatalkan')
+                            @case('rejected')
                                 <span class="bg-red-100 text-red-700 px-4 py-1 rounded-full">
-                                    ❌ Dibatalkan
+                                    Ditolak
+                                </span>
+                            @break
+
+                            @case('cancelled')
+                                <span class="bg-gray-100 text-gray-700 px-4 py-1 rounded-full">
+                                    Dibatalkan
                                 </span>
                             @break
 

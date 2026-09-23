@@ -88,6 +88,72 @@ Laporan Platform
         </form>
     </div>
 
+    {{-- EXPORT EXCEL --}}
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Export Laporan</h3>
+
+        <form method="POST" action="{{ route('admin.report.export') }}" class="space-y-4">
+            @csrf
+
+            <div>
+                <label class="block text-sm font-medium text-gray-600 mb-2">Jenis Data</label>
+                <div class="flex flex-wrap gap-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="exports[]" value="monthly"
+                               class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-400"
+                               onchange="toggleMonthYear()">
+                        <span class="text-sm text-gray-700">Laporan Bulanan</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="exports[]" value="yearly"
+                               class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-400"
+                               onchange="toggleMonthYear()">
+                        <span class="text-sm text-gray-700">Laporan Tahunan</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" name="exports[]" value="menus"
+                               class="w-4 h-4 text-orange-500 border-gray-300 rounded focus:ring-orange-400">
+                        <span class="text-sm text-gray-700">Menu UMKM</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap gap-4" id="filterPeriode">
+                <div id="bulanField">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Bulan</label>
+                    <select name="month"
+                            class="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-orange-400">
+                        @for($i=1;$i<=12;$i++)
+                            <option value="{{ $i }}" {{ $bulan==$i ? 'selected' : '' }}>
+                                {{ DateTime::createFromFormat('!m',$i)->format('F') }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
+                <div id="tahunField">
+                    <label class="block text-sm font-medium text-gray-600 mb-2">Tahun</label>
+                    <select name="year"
+                            class="border border-gray-300 rounded-xl px-4 py-2 focus:ring-2 focus:ring-orange-400">
+                        @for($y=2025;$y<=date('Y');$y++)
+                            <option value="{{ $y }}" {{ $tahun==$y ? 'selected' : '' }}>
+                                {{ $y }}
+                            </option>
+                        @endfor
+                    </select>
+                </div>
+            </div>
+
+            @error('exports')
+                <p class="text-red-500 text-sm">{{ $message }}</p>
+            @enderror
+
+            <button type="submit"
+                    class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-xl transition">
+                Export Excel
+            </button>
+        </form>
+    </div>
+
     {{-- CARD --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
 
@@ -236,5 +302,22 @@ Laporan Platform
     </div>
 
 </div>
+
+<script>
+function toggleMonthYear() {
+    const monthly = document.querySelector('input[value="monthly"]');
+    const yearly = document.querySelector('input[value="yearly"]');
+    const bulanField = document.getElementById('bulanField');
+    const tahunField = document.getElementById('tahunField');
+
+    const showBulan = monthly.checked;
+    const showTahun = monthly.checked || yearly.checked;
+
+    bulanField.style.display = showBulan ? 'block' : 'none';
+    tahunField.style.display = showTahun ? 'block' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', toggleMonthYear);
+</script>
 
 @endsection

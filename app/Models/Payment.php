@@ -9,7 +9,6 @@ class Payment extends Model
     protected $fillable = [
         'order_id',
         'bukti_bayar',
-        'status'
     ];
 
     public function order()

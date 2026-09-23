@@ -4,23 +4,42 @@ namespace App\Http\Controllers\User;
 
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\Umkm;
 use App\Http\Controllers\Controller;
 use App\Models\OrderItem;
-use App\Services\DistanceService;
+use App\Services\ShippingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class CheckoutController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $umkmId = $request->query('umkm_id');
+
+        if (!$umkmId) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Pilih toko terlebih dahulu untuk checkout.');
+        }
+
+        $umkm = Umkm::find($umkmId);
+        if (!$umkm) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Toko tidak ditemukan.');
+        }
+
         $carts = Cart::with('makanan')
             ->where('user_id', Auth::id())
+            ->whereHas('makanan', function ($q) use ($umkmId) {
+                $q->where('umkm_id', $umkmId);
+            })
             ->get();
 
         if ($carts->isEmpty()) {
-            return back()->with('error', 'Keranjang kosong');
+            return redirect()->route('cart.index')
+                ->with('error', 'Tidak ada item dari toko ini di keranjang.');
         }
 
         $total = $carts->sum(function ($item) {
@@ -34,156 +53,135 @@ class CheckoutController extends Controller
                 ->with('error', 'Anda belum mengatur lokasi. Silakan lengkapi profil lokasi terlebih dahulu.');
         }
 
-        $umkm = $carts->first()->makanan->umkm;
-
-        if ($umkm->latitude && $umkm->longitude) {
-            $distance = DistanceService::haversine(
-                $profile->latitude,
-                $profile->longitude,
-                $umkm->latitude,
-                $umkm->longitude
-            );
-
-            if ($distance <= 2) {
-                $ongkir = 5000;
-            } elseif ($distance <= 5) {
-                $ongkir = 10000;
-            } elseif ($distance <= 10) {
-                $ongkir = 15000;
-            } else {
-                $ongkir = 20000;
-            }
-        } else {
-            $ongkir = 10000;
+        if (!$umkm->latitude || !$umkm->longitude) {
+            return redirect()->route('cart.index')
+                ->with('error', 'Toko "' . $umkm->nama_umkm . '" belum mengatur lokasi. Silakan pilih toko lain.');
         }
 
-        return view(
-            'user.checkout',
-            compact(
-                'carts',
-                'total',
-                'profile',
-                'ongkir'
-            )
+        $shipping = app(ShippingService::class);
+        $result = $shipping->calculate(
+            (float) $profile->latitude,
+            (float) $profile->longitude,
+            (float) $umkm->latitude,
+            (float) $umkm->longitude
         );
-    }
 
-    public function store(Request $request)
-{
-    $request->validate([
-        'alamat_pengiriman' => 'required',
-        'metode_pengiriman' => 'required|in:delivery,pickup',
-    ]);
-
-    $carts = Cart::where(
-        'user_id',
-        Auth::id()
-    )->get();
-
-    if ($carts->isEmpty()) {
-
-        return back()->with(
-            'error',
-            'Keranjang kosong'
-        );
-    }
-
-    $subtotal = $carts->sum(function ($item) {
-        return $item->qty * $item->harga;
-    });
-
-    // ambil profile user
-    $user = Auth::user();
-    $profile = Auth::user()->profile;
-
-    if (!$profile->latitude || !$profile->longitude) {
-        return back()->with('error', 'Lengkapi profil lokasi Anda terlebih dahulu di halaman profil.');
-    }
-// Ambil UMKM dari produk pertama di keranjang
-$umkm = $carts->first()->makanan->umkm;
-
-// Hitung jarak user ke UMKM
-$distance = DistanceService::haversine(
-    $profile->latitude,
-    $profile->longitude,
-    $umkm->latitude,
-    $umkm->longitude
-);
-
-if ($request->metode_pengiriman == 'pickup') {
-
-    $ongkir = 0;
-
-} else {
-
-    if ($distance <= 2) {
-
-        $ongkir = 5000;
-
-    } elseif ($distance <= 5) {
-
-        $ongkir = 10000;
-
-    } elseif ($distance <= 10) {
-
-        $ongkir = 15000;
-
-    } else {
-
-        $ongkir = 20000;
-
-    }
-
-}
-$profile->update([
-    'alamat' => $request->alamat_pengiriman
-]);
-
-$order = Order::create([
-    'user_id' => $user->id,
-    'umkm_id' => $carts->first()->makanan->umkm_id,
-
-    'kode_order' => 'TGF-' . strtoupper(Str::random(8)),
-
-    // Snapshot penerima
-    'nama_penerima' => $profile->nama_lengkap,
-    'nomor_telepon' => $profile->nomor_telepon,
-
-    'alamat_pengiriman' => $request->alamat_pengiriman,
-    'metode_pengiriman' => $request->metode_pengiriman,
-
-    'subtotal' => $subtotal,
-    'ongkir' => $ongkir,
-    'total' => $subtotal + $ongkir,
-    'status' => 'pending',
-]);
-
-    foreach ($carts as $cart) {
-
-        OrderItem::create([
-
-            'order_id' => $order->id,
-
-            'makanan_id' => $cart->makanan_id,
-
-            'qty' => $cart->qty,
-
-            'harga' => $cart->harga,
-
-            'subtotal' => $cart->qty * $cart->harga
-
+        return view('user.checkout', [
+            'carts'            => $carts,
+            'total'            => $total,
+            'profile'          => $profile,
+            'ongkir'           => $result['ongkir'],
+            'umkm'             => $umkm,
+            'distance_km'      => $result['distance_km'],
+            'duration_minutes' => $result['duration_minutes'],
+            'shipping_error'   => $result['error'],
         ]);
     }
 
-    Cart::where(
-        'user_id',
-        Auth::id()
-    )->delete();
+    public function store(Request $request)
+    {
+        $request->validate([
+            'alamat_pengiriman'  => 'required',
+            'metode_pengiriman'  => 'required|in:delivery,pickup',
+            'umkm_id'            => 'required|exists:umkms,id',
+        ]);
 
-    return redirect()
-        ->route(
-            'payment.show',
-            $order->id
-        );
-}
+        $umkmId = $request->umkm_id;
+        $metode = $request->metode_pengiriman;
+
+        $carts = Cart::with('makanan')
+            ->where('user_id', Auth::id())
+            ->whereHas('makanan', function ($q) use ($umkmId) {
+                $q->where('umkm_id', $umkmId);
+            })
+            ->get();
+
+        if ($carts->isEmpty()) {
+            return back()->with('error', 'Tidak ada item dari toko ini di keranjang.');
+        }
+
+        $subtotal = $carts->sum(function ($item) {
+            return $item->qty * $item->harga;
+        });
+
+        $user    = Auth::user();
+        $profile = $user->profile;
+
+        if (!$profile || !$profile->latitude || !$profile->longitude) {
+            return back()->with('error', 'Lengkapi profil lokasi Anda terlebih dahulu di halaman profil.');
+        }
+
+        $umkm = Umkm::find($umkmId);
+
+        if ($metode === 'pickup') {
+            $ongkir = 0;
+            $distanceKm      = 0;
+            $durationMinutes = 0;
+        } else {
+            if (!$umkm->latitude || !$umkm->longitude) {
+                return back()->with('error', 'Toko "' . $umkm->nama_umkm . '" belum mengatur lokasi. Silakan pilih metode Pick Up.');
+            }
+
+            $shipping = app(ShippingService::class);
+            $result = $shipping->calculate(
+                (float) $profile->latitude,
+                (float) $profile->longitude,
+                (float) $umkm->latitude,
+                (float) $umkm->longitude
+            );
+
+            if ($result['error']) {
+                return back()->with('error', $result['error']);
+            }
+
+            $ongkir          = $result['ongkir'];
+            $distanceKm      = $result['distance_km'];
+            $durationMinutes = $result['duration_minutes'];
+        }
+
+        $profile->update([
+            'alamat' => $request->alamat_pengiriman,
+        ]);
+
+        $order = DB::transaction(function () use (
+            $user, $umkmId, $profile, $request, $metode,
+            $subtotal, $ongkir, $carts
+        ) {
+            $order = Order::create([
+                'user_id'           => $user->id,
+                'umkm_id'           => $umkmId,
+                'kode_order'        => 'TGF-' . strtoupper(Str::random(8)),
+                'nama_penerima'     => $profile->nama_lengkap,
+                'nomor_telepon'     => $profile->nomor_telepon,
+                'alamat_pengiriman' => $request->alamat_pengiriman,
+                'metode_pengiriman' => $metode,
+                'subtotal'          => $subtotal,
+                'ongkir'            => $ongkir,
+                'total'             => $subtotal + $ongkir,
+                'status'            => 'pending_confirmation',
+            ]);
+
+            foreach ($carts as $cart) {
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'makanan_id' => $cart->makanan_id,
+                    'qty'        => $cart->qty,
+                    'harga'      => $cart->harga,
+                    'subtotal'   => $cart->qty * $cart->harga,
+                ]);
+            }
+
+            Cart::where('user_id', $user->id)
+                ->whereHas('makanan', function ($q) use ($umkmId) {
+                    $q->where('umkm_id', $umkmId);
+                })
+                ->delete();
+
+            return $order;
+        });
+
+        return redirect()
+            ->route('orders.show', $order->id)
+            ->with('success', 'Pesanan berhasil dibuat. Silakan tunggu konfirmasi dari UMKM.');
+    }
 }

@@ -20,8 +20,9 @@ class CloudinaryService
     public function upload(UploadedFile $file, string $folder = 'qris'): ?string
     {
         if (empty($this->cloudName) || empty($this->uploadPreset)) {
-            Log::warning('Cloudinary not configured.');
-            return null;
+            Log::warning('Cloudinary not configured, using local storage.');
+            $path = $file->store($folder, 'public');
+            return $path;
         }
 
         $dataUri = 'data:' . $file->getMimeType() . ';base64,' . base64_encode($file->get());
@@ -37,11 +38,12 @@ class CloudinaryService
             return $response->json('secure_url');
         }
 
-        Log::warning('Cloudinary upload failed.', [
+        Log::warning('Cloudinary upload failed, falling back to local storage.', [
             'status' => $response->status(),
             'error' => $response->body(),
         ]);
 
-        return null;
+        $path = $file->store($folder, 'public');
+        return $path;
     }
 }

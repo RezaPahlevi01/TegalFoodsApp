@@ -9,15 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class AdminReportService
 {
-    /*
-    |--------------------------------------------------------------------------
-    | FILTER UTAMA (FIX CORE)
-    |--------------------------------------------------------------------------
-    */
+    private const SUCCESSFUL_STATUSES = [
+        'paid',
+        'processing',
+        'ready',
+        'delivering',
+        'completed',
+    ];
+
     private function applyFilter($query, $tipe, $hari, $bulan, $tahun)
     {
         return $query
-            ->where('status', 'selesai')
+            ->whereIn('status', self::SUCCESSFUL_STATUSES)
             ->when($tipe == 'hari', function ($q) use ($hari, $bulan, $tahun) {
                 $q->whereDay('created_at', $hari)
                   ->whereMonth('created_at', $bulan)

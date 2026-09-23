@@ -18,25 +18,33 @@
     {{-- STATUS BADGE --}}
     @php
         $statusColors = [
-            'pending'    => 'bg-yellow-100 text-yellow-700 border-yellow-200',
-            'dibayar'    => 'bg-blue-100 text-blue-700 border-blue-200',
-            'diproses'   => 'bg-indigo-100 text-indigo-700 border-indigo-200',
-            'dikirim'    => 'bg-purple-100 text-purple-700 border-purple-200',
-            'selesai'    => 'bg-emerald-100 text-emerald-700 border-emerald-200',
-            'dibatalkan' => 'bg-red-100 text-red-700 border-red-200',
+            'pending_confirmation' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
+            'waiting_payment'      => 'bg-blue-100 text-blue-700 border-blue-200',
+            'paid'                 => 'bg-indigo-100 text-indigo-700 border-indigo-200',
+            'processing'           => 'bg-purple-100 text-purple-700 border-purple-200',
+            'ready'                => 'bg-teal-100 text-teal-700 border-teal-200',
+            'delivering'           => 'bg-cyan-100 text-cyan-700 border-cyan-200',
+            'completed'            => 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            'rejected'             => 'bg-red-100 text-red-700 border-red-200',
+            'cancelled'            => 'bg-gray-100 text-gray-700 border-gray-200',
+        ];
+        $statusLabels = [
+            'pending_confirmation' => 'Menunggu Konfirmasi',
+            'waiting_payment'      => 'Menunggu Pembayaran',
+            'paid'                 => 'Dibayar',
+            'processing'           => 'Diproses',
+            'ready'                => 'Siap',
+            'delivering'           => 'Diantar',
+            'completed'            => 'Selesai',
+            'rejected'             => 'Ditolak',
+            'cancelled'            => 'Dibatalkan',
         ];
         $color = $statusColors[$order->status] ?? 'bg-gray-100 text-gray-700 border-gray-200';
+        $label = $statusLabels[$order->status] ?? ucfirst($order->status);
     @endphp
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-3 flex-wrap">
         <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-sm font-bold border {{ $color }}">
-            @if($order->status === 'selesai')
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-            @elseif($order->status === 'dibatalkan')
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
-            @else
-                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-            @endif
-            {{ ucfirst($order->status) }}
+            {{ $label }}
         </span>
     </div>
 
@@ -131,10 +139,8 @@
                         <span class="text-gray-500 text-sm">Metode</span>
                         <span class="ml-auto font-semibold text-gray-800 flex items-center gap-1.5">
                             @if($order->metode_pengiriman === 'delivery')
-                                <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg>
                                 Delivery
                             @else
-                                <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
                                 Pick Up
                             @endif
                         </span>
@@ -180,34 +186,159 @@
                 </div>
             </div>
 
-            {{-- UPDATE STATUS --}}
+            {{-- ACTIONS --}}
+            @if($order->status === 'pending_confirmation')
+            {{-- KONFIRMASI / TOLAK --}}
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 px-5 py-3 flex items-center gap-3">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 px-5 py-3 flex items-center gap-3">
                     <div class="bg-white/20 p-2 rounded-full">
-                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
-                    <h3 class="font-bold text-white">Update Status</h3>
+                    <h3 class="font-bold text-white">Konfirmasi Pesanan</h3>
+                </div>
+                <div class="p-5 space-y-3">
+                    <form method="POST" action="{{ route('umkm.manage-orders.confirm', $order->id) }}">
+                        @csrf
+                        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Konfirmasi Pesanan
+                        </button>
+                    </form>
+
+                    <button type="button" onclick="document.getElementById('rejectModal').classList.remove('hidden')" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        Tolak Pesanan
+                    </button>
+                </div>
+            </div>
+            @endif
+
+            @if($order->status === 'paid')
+            {{-- MULAI PROSES --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-purple-500 to-purple-600 px-5 py-3 flex items-center gap-3">
+                    <div class="bg-white/20 p-2 rounded-full">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    </div>
+                    <h3 class="font-bold text-white">Proses Pesanan</h3>
                 </div>
                 <div class="p-5">
-                    <form method="POST" action="{{ route('umkm.manage-orders.updateStatus', $order->id) }}" class="space-y-3">
+                    <form method="POST" action="{{ route('umkm.manage-orders.updateStatus', $order->id) }}">
                         @csrf
-                        <select name="status" class="w-full border border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-yellow-400 focus:outline-none bg-gray-50">
-                            <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="dibayar" {{ $order->status == 'dibayar' ? 'selected' : '' }}>Dibayar</option>
-                            <option value="diproses" {{ $order->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
-                            <option value="dikirim" {{ $order->status == 'dikirim' ? 'selected' : '' }}>Dikirim</option>
-                            <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                            <option value="dibatalkan" {{ $order->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
-                        </select>
-                        <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                            Update Status
+                        <input type="hidden" name="status" value="processing">
+                        <button type="submit" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                            Mulai Proses
                         </button>
                     </form>
                 </div>
             </div>
+            @endif
+
+            @if($order->status === 'processing')
+            {{-- TANDAI SIAP --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-teal-500 to-teal-600 px-5 py-3 flex items-center gap-3">
+                    <div class="bg-white/20 p-2 rounded-full">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h3 class="font-bold text-white">Tandai Siap</h3>
+                </div>
+                <div class="p-5">
+                    <form method="POST" action="{{ route('umkm.manage-orders.updateStatus', $order->id) }}">
+                        @csrf
+                        <input type="hidden" name="status" value="ready">
+                        <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Tandai Siap
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
+
+            @if($order->status === 'ready')
+            {{-- SIAP --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-cyan-500 to-cyan-600 px-5 py-3 flex items-center gap-3">
+                    <div class="bg-white/20 p-2 rounded-full">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h3 class="font-bold text-white">
+                        @if($order->metode_pengiriman === 'pickup')
+                            Tandai Selesai
+                        @else
+                            Tandai Sedang Diantar
+                        @endif
+                    </h3>
+                </div>
+                <div class="p-5">
+                    <form method="POST" action="{{ route('umkm.manage-orders.updateStatus', $order->id) }}">
+                        @csrf
+                        <input type="hidden" name="status" value="{{ $order->metode_pengiriman === 'pickup' ? 'completed' : 'delivering' }}">
+                        <button type="submit" class="w-full {{ $order->metode_pengiriman === 'pickup' ? 'bg-green-500 hover:bg-green-600' : 'bg-cyan-500 hover:bg-cyan-600' }} text-white font-bold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            @if($order->metode_pengiriman === 'pickup')
+                                Tandai Selesai
+                            @else
+                                Tandai Sedang Diantar
+                            @endif
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
+
+            @if($order->status === 'delivering')
+            {{-- TANDAI SELESAI --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 px-5 py-3 flex items-center gap-3">
+                    <div class="bg-white/20 p-2 rounded-full">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h3 class="font-bold text-white">Tandai Selesai</h3>
+                </div>
+                <div class="p-5">
+                    <form method="POST" action="{{ route('umkm.manage-orders.updateStatus', $order->id) }}">
+                        @csrf
+                        <input type="hidden" name="status" value="completed">
+                        <button type="submit" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition-colors duration-200 flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                            Tandai Selesai
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
 
         </div>
     </div>
 </div>
+
+{{-- REJECT MODAL --}}
+@if($order->status === 'pending_confirmation')
+<div id="rejectModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Tolak Pesanan</h3>
+        <p class="text-gray-500 text-sm mb-4">Masukkan alasan penolakan pesanan ini.</p>
+        <form method="POST" action="{{ route('umkm.manage-orders.reject', $order->id) }}" class="space-y-4">
+            @csrf
+            <textarea name="alasan_penolakan" rows="3" required maxlength="500"
+                class="w-full border border-gray-300 rounded-xl p-3 text-sm focus:ring-2 focus:ring-red-400 focus:outline-none"
+                placeholder="Contoh: Stok makanan habis..."></textarea>
+            <div class="flex gap-3">
+                <button type="button" onclick="document.getElementById('rejectModal').classList.add('hidden')"
+                    class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2.5 rounded-xl transition">
+                    Batal
+                </button>
+                <button type="submit"
+                    class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-xl transition">
+                    Tolak
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
 @endsection

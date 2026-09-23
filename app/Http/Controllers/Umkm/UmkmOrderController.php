@@ -8,7 +8,6 @@ use App\Models\Order;
 
 class UmkmOrderController extends Controller
 {
-    // 🔹 LIST ORDER MILIK UMKM
     public function index()
     {
         $umkmId = auth()->user()->umkm->id;
@@ -16,14 +15,24 @@ class UmkmOrderController extends Controller
         $orders = Order::whereHas('items.makanan', function ($q) use ($umkmId) {
                 $q->where('umkm_id', $umkmId);
             })
-            ->with('user')
+            ->with(['user', 'payment'])
+            ->orderByRaw("CASE status
+                WHEN 'pending_confirmation' THEN 0
+                WHEN 'waiting_payment' THEN 1
+                WHEN 'paid' THEN 2
+                WHEN 'processing' THEN 3
+                WHEN 'ready' THEN 4
+                WHEN 'delivering' THEN 5
+                WHEN 'completed' THEN 6
+                WHEN 'rejected' THEN 7
+                WHEN 'cancelled' THEN 8
+                ELSE 9 END")
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('mitra.orders.index', compact('orders'));
     }
 
-    // 🔹 DETAIL ORDER
     public function show($id)
     {
         $umkmId = auth()->user()->umkm->id;
@@ -38,11 +47,29 @@ class UmkmOrderController extends Controller
         return view('mitra.orders.show', compact('order', 'umkmId'));
     }
 
-    // 🔹 UPDATE STATUS ORDER
-    public function updateStatus(Request $request, $id)
+    public function confirm(Request $request, $id)
+    {
+        $umkmId = auth()->user()->umkm->id;
+
+        $order = Order::whereHas('items.makanan', function ($q) use ($umkmId) {
+                $q->where('umkm_id', $umkmId);
+            })
+            ->where('id', $id)
+            ->firstOrFail();
+
+        if ($order->status !== 'pending_confirmation') {
+            return back()->with('error', 'Pesanan sudah tidak menunggu konfirmasi.');
+        }
+
+        $order->transitionTo('waiting_payment');
+
+        return redirect()->back()->with('success', 'Pesanan telah dikonfirmasi. Pelanggan sekarang dapat melakukan pembayaran.');
+    }
+
+    public function reject(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|string'
+            'alasan_penolakan' => 'required|string|max:500',
         ]);
 
         $umkmId = auth()->user()->umkm->id;
@@ -50,11 +77,41 @@ class UmkmOrderController extends Controller
         $order = Order::whereHas('items.makanan', function ($q) use ($umkmId) {
                 $q->where('umkm_id', $umkmId);
             })
-            ->findOrFail($id);
+            ->where('id', $id)
+            ->firstOrFail();
 
-        $order->status = $request->status;
-        $order->save();
+        if ($order->status !== 'pending_confirmation') {
+            return back()->with('error', 'Pesanan sudah tidak dapat ditolak.');
+        }
 
-        return redirect()->back()->with('success', 'Status order berhasil diperbarui');
+        $order->update([
+            'status' => 'rejected',
+            'alasan_penolakan' => $request->alasan_penolakan,
+        ]);
+
+        return redirect()->back()->with('success', 'Pesanan berhasil ditolak.');
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|string|in:processing,ready,delivering,completed',
+        ]);
+
+        $umkmId = auth()->user()->umkm->id;
+
+        $order = Order::whereHas('items.makanan', function ($q) use ($umkmId) {
+                $q->where('umkm_id', $umkmId);
+            })
+            ->where('id', $id)
+            ->firstOrFail();
+
+        if (!$order->canTransitionTo($request->status)) {
+            return back()->with('error', 'Perubahan status tidak diizinkan.');
+        }
+
+        $order->transitionTo($request->status);
+
+        return redirect()->back()->with('success', 'Status pesanan berhasil diperbarui.');
     }
 }

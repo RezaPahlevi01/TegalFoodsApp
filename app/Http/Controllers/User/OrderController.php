@@ -25,7 +25,7 @@ class OrderController extends Controller
 
     public function show($id)
     {
-        $order = Order::with('items.makanan')
+        $order = Order::with(['items.makanan', 'payment'])
             ->where('user_id', Auth::id())
             ->findOrFail($id);
 
